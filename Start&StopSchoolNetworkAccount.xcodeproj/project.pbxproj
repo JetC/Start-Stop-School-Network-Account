@@ -1,0 +1,486 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		DF4E7BC4190E427C009C6129 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF4E7BC3190E427C009C6129 /* Foundation.framework */; };
+		DF4E7BC6190E427C009C6129 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF4E7BC5190E427C009C6129 /* CoreGraphics.framework */; };
+		DF4E7BC8190E427C009C6129 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF4E7BC7190E427C009C6129 /* UIKit.framework */; };
+		DF4E7BCE190E427C009C6129 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = DF4E7BCC190E427C009C6129 /* InfoPlist.strings */; };
+		DF4E7BD0190E427C009C6129 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = DF4E7BCF190E427C009C6129 /* main.m */; };
+		DF4E7BD4190E427C009C6129 /* SFAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = DF4E7BD3190E427C009C6129 /* SFAppDelegate.m */; };
+		DF4E7BD7190E427C009C6129 /* Main_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DF4E7BD5190E427C009C6129 /* Main_iPhone.storyboard */; };
+		DF4E7BDA190E427C009C6129 /* Main_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DF4E7BD8190E427C009C6129 /* Main_iPad.storyboard */; };
+		DF4E7BDD190E427C009C6129 /* SFViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DF4E7BDC190E427C009C6129 /* SFViewController.m */; };
+		DF4E7BDF190E427C009C6129 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DF4E7BDE190E427C009C6129 /* Images.xcassets */; };
+		DF4E7BE6190E427C009C6129 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF4E7BE5190E427C009C6129 /* XCTest.framework */; };
+		DF4E7BE7190E427C009C6129 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF4E7BC3190E427C009C6129 /* Foundation.framework */; };
+		DF4E7BE8190E427C009C6129 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF4E7BC7190E427C009C6129 /* UIKit.framework */; };
+		DF4E7BF0190E427C009C6129 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = DF4E7BEE190E427C009C6129 /* InfoPlist.strings */; };
+		DF4E7BF2190E427C009C6129 /* Start_StopSchoolNetworkAccountTests.m in Sources */ = {isa = PBXBuildFile; fileRef = DF4E7BF1190E427C009C6129 /* Start_StopSchoolNetworkAccountTests.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		DF4E7BE9190E427C009C6129 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DF4E7BB8190E427C009C6129 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DF4E7BBF190E427C009C6129;
+			remoteInfo = "Start&StopSchoolNetworkAccount";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		DF4E7BC0190E427C009C6129 /* Start&StopSchoolNetworkAccount.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Start&StopSchoolNetworkAccount.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		DF4E7BC3190E427C009C6129 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		DF4E7BC5190E427C009C6129 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		DF4E7BC7190E427C009C6129 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		DF4E7BCB190E427C009C6129 /* Start&StopSchoolNetworkAccount-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Start&StopSchoolNetworkAccount-Info.plist"; sourceTree = "<group>"; };
+		DF4E7BCD190E427C009C6129 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		DF4E7BCF190E427C009C6129 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		DF4E7BD1190E427C009C6129 /* Start&StopSchoolNetworkAccount-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Start&StopSchoolNetworkAccount-Prefix.pch"; sourceTree = "<group>"; };
+		DF4E7BD2190E427C009C6129 /* SFAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SFAppDelegate.h; sourceTree = "<group>"; };
+		DF4E7BD3190E427C009C6129 /* SFAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SFAppDelegate.m; sourceTree = "<group>"; };
+		DF4E7BD6190E427C009C6129 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main_iPhone.storyboard; sourceTree = "<group>"; };
+		DF4E7BD9190E427C009C6129 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main_iPad.storyboard; sourceTree = "<group>"; };
+		DF4E7BDB190E427C009C6129 /* SFViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SFViewController.h; sourceTree = "<group>"; };
+		DF4E7BDC190E427C009C6129 /* SFViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SFViewController.m; sourceTree = "<group>"; };
+		DF4E7BDE190E427C009C6129 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		DF4E7BE4190E427C009C6129 /* Start&StopSchoolNetworkAccountTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Start&StopSchoolNetworkAccountTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		DF4E7BE5190E427C009C6129 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		DF4E7BED190E427C009C6129 /* Start&StopSchoolNetworkAccountTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Start&StopSchoolNetworkAccountTests-Info.plist"; sourceTree = "<group>"; };
+		DF4E7BEF190E427C009C6129 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		DF4E7BF1190E427C009C6129 /* Start_StopSchoolNetworkAccountTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Start_StopSchoolNetworkAccountTests.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		DF4E7BBD190E427C009C6129 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DF4E7BC6190E427C009C6129 /* CoreGraphics.framework in Frameworks */,
+				DF4E7BC8190E427C009C6129 /* UIKit.framework in Frameworks */,
+				DF4E7BC4190E427C009C6129 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DF4E7BE1190E427C009C6129 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DF4E7BE6190E427C009C6129 /* XCTest.framework in Frameworks */,
+				DF4E7BE8190E427C009C6129 /* UIKit.framework in Frameworks */,
+				DF4E7BE7190E427C009C6129 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		DF4E7BB7190E427C009C6129 = {
+			isa = PBXGroup;
+			children = (
+				DF4E7BC9190E427C009C6129 /* Start&StopSchoolNetworkAccount */,
+				DF4E7BEB190E427C009C6129 /* Start&StopSchoolNetworkAccountTests */,
+				DF4E7BC2190E427C009C6129 /* Frameworks */,
+				DF4E7BC1190E427C009C6129 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		DF4E7BC1190E427C009C6129 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				DF4E7BC0190E427C009C6129 /* Start&StopSchoolNetworkAccount.app */,
+				DF4E7BE4190E427C009C6129 /* Start&StopSchoolNetworkAccountTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		DF4E7BC2190E427C009C6129 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				DF4E7BC3190E427C009C6129 /* Foundation.framework */,
+				DF4E7BC5190E427C009C6129 /* CoreGraphics.framework */,
+				DF4E7BC7190E427C009C6129 /* UIKit.framework */,
+				DF4E7BE5190E427C009C6129 /* XCTest.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		DF4E7BC9190E427C009C6129 /* Start&StopSchoolNetworkAccount */ = {
+			isa = PBXGroup;
+			children = (
+				DF4E7BD2190E427C009C6129 /* SFAppDelegate.h */,
+				DF4E7BD3190E427C009C6129 /* SFAppDelegate.m */,
+				DF4E7BD5190E427C009C6129 /* Main_iPhone.storyboard */,
+				DF4E7BD8190E427C009C6129 /* Main_iPad.storyboard */,
+				DF4E7BDB190E427C009C6129 /* SFViewController.h */,
+				DF4E7BDC190E427C009C6129 /* SFViewController.m */,
+				DF4E7BDE190E427C009C6129 /* Images.xcassets */,
+				DF4E7BCA190E427C009C6129 /* Supporting Files */,
+			);
+			path = "Start&StopSchoolNetworkAccount";
+			sourceTree = "<group>";
+		};
+		DF4E7BCA190E427C009C6129 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				DF4E7BCB190E427C009C6129 /* Start&StopSchoolNetworkAccount-Info.plist */,
+				DF4E7BCC190E427C009C6129 /* InfoPlist.strings */,
+				DF4E7BCF190E427C009C6129 /* main.m */,
+				DF4E7BD1190E427C009C6129 /* Start&StopSchoolNetworkAccount-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		DF4E7BEB190E427C009C6129 /* Start&StopSchoolNetworkAccountTests */ = {
+			isa = PBXGroup;
+			children = (
+				DF4E7BF1190E427C009C6129 /* Start_StopSchoolNetworkAccountTests.m */,
+				DF4E7BEC190E427C009C6129 /* Supporting Files */,
+			);
+			path = "Start&StopSchoolNetworkAccountTests";
+			sourceTree = "<group>";
+		};
+		DF4E7BEC190E427C009C6129 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				DF4E7BED190E427C009C6129 /* Start&StopSchoolNetworkAccountTests-Info.plist */,
+				DF4E7BEE190E427C009C6129 /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		DF4E7BBF190E427C009C6129 /* Start&StopSchoolNetworkAccount */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DF4E7BF5190E427C009C6129 /* Build configuration list for PBXNativeTarget "Start&StopSchoolNetworkAccount" */;
+			buildPhases = (
+				DF4E7BBC190E427C009C6129 /* Sources */,
+				DF4E7BBD190E427C009C6129 /* Frameworks */,
+				DF4E7BBE190E427C009C6129 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Start&StopSchoolNetworkAccount";
+			productName = "Start&StopSchoolNetworkAccount";
+			productReference = DF4E7BC0190E427C009C6129 /* Start&StopSchoolNetworkAccount.app */;
+			productType = "com.apple.product-type.application";
+		};
+		DF4E7BE3190E427C009C6129 /* Start&StopSchoolNetworkAccountTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DF4E7BF8190E427C009C6129 /* Build configuration list for PBXNativeTarget "Start&StopSchoolNetworkAccountTests" */;
+			buildPhases = (
+				DF4E7BE0190E427C009C6129 /* Sources */,
+				DF4E7BE1190E427C009C6129 /* Frameworks */,
+				DF4E7BE2190E427C009C6129 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				DF4E7BEA190E427C009C6129 /* PBXTargetDependency */,
+			);
+			name = "Start&StopSchoolNetworkAccountTests";
+			productName = "Start&StopSchoolNetworkAccountTests";
+			productReference = DF4E7BE4190E427C009C6129 /* Start&StopSchoolNetworkAccountTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		DF4E7BB8190E427C009C6129 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				CLASSPREFIX = SF;
+				LastUpgradeCheck = 0510;
+				ORGANIZATIONNAME = "孙培峰";
+				TargetAttributes = {
+					DF4E7BE3190E427C009C6129 = {
+						TestTargetID = DF4E7BBF190E427C009C6129;
+					};
+				};
+			};
+			buildConfigurationList = DF4E7BBB190E427C009C6129 /* Build configuration list for PBXProject "Start&StopSchoolNetworkAccount" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = DF4E7BB7190E427C009C6129;
+			productRefGroup = DF4E7BC1190E427C009C6129 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				DF4E7BBF190E427C009C6129 /* Start&StopSchoolNetworkAccount */,
+				DF4E7BE3190E427C009C6129 /* Start&StopSchoolNetworkAccountTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		DF4E7BBE190E427C009C6129 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DF4E7BDA190E427C009C6129 /* Main_iPad.storyboard in Resources */,
+				DF4E7BDF190E427C009C6129 /* Images.xcassets in Resources */,
+				DF4E7BD7190E427C009C6129 /* Main_iPhone.storyboard in Resources */,
+				DF4E7BCE190E427C009C6129 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DF4E7BE2190E427C009C6129 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DF4E7BF0190E427C009C6129 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		DF4E7BBC190E427C009C6129 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DF4E7BD0190E427C009C6129 /* main.m in Sources */,
+				DF4E7BDD190E427C009C6129 /* SFViewController.m in Sources */,
+				DF4E7BD4190E427C009C6129 /* SFAppDelegate.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DF4E7BE0190E427C009C6129 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DF4E7BF2190E427C009C6129 /* Start_StopSchoolNetworkAccountTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		DF4E7BEA190E427C009C6129 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DF4E7BBF190E427C009C6129 /* Start&StopSchoolNetworkAccount */;
+			targetProxy = DF4E7BE9190E427C009C6129 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		DF4E7BCC190E427C009C6129 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				DF4E7BCD190E427C009C6129 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		DF4E7BD5190E427C009C6129 /* Main_iPhone.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				DF4E7BD6190E427C009C6129 /* Base */,
+			);
+			name = Main_iPhone.storyboard;
+			sourceTree = "<group>";
+		};
+		DF4E7BD8190E427C009C6129 /* Main_iPad.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				DF4E7BD9190E427C009C6129 /* Base */,
+			);
+			name = Main_iPad.storyboard;
+			sourceTree = "<group>";
+		};
+		DF4E7BEE190E427C009C6129 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				DF4E7BEF190E427C009C6129 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		DF4E7BF3190E427C009C6129 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		DF4E7BF4190E427C009C6129 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		DF4E7BF6190E427C009C6129 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Start&StopSchoolNetworkAccount/Start&StopSchoolNetworkAccount-Prefix.pch";
+				INFOPLIST_FILE = "Start&StopSchoolNetworkAccount/Start&StopSchoolNetworkAccount-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		DF4E7BF7190E427C009C6129 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Start&StopSchoolNetworkAccount/Start&StopSchoolNetworkAccount-Prefix.pch";
+				INFOPLIST_FILE = "Start&StopSchoolNetworkAccount/Start&StopSchoolNetworkAccount-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		DF4E7BF9190E427C009C6129 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Start&StopSchoolNetworkAccount.app/Start&StopSchoolNetworkAccount";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Start&StopSchoolNetworkAccount/Start&StopSchoolNetworkAccount-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "Start&StopSchoolNetworkAccountTests/Start&StopSchoolNetworkAccountTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Debug;
+		};
+		DF4E7BFA190E427C009C6129 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Start&StopSchoolNetworkAccount.app/Start&StopSchoolNetworkAccount";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Start&StopSchoolNetworkAccount/Start&StopSchoolNetworkAccount-Prefix.pch";
+				INFOPLIST_FILE = "Start&StopSchoolNetworkAccountTests/Start&StopSchoolNetworkAccountTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		DF4E7BBB190E427C009C6129 /* Build configuration list for PBXProject "Start&StopSchoolNetworkAccount" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DF4E7BF3190E427C009C6129 /* Debug */,
+				DF4E7BF4190E427C009C6129 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DF4E7BF5190E427C009C6129 /* Build configuration list for PBXNativeTarget "Start&StopSchoolNetworkAccount" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DF4E7BF6190E427C009C6129 /* Debug */,
+				DF4E7BF7190E427C009C6129 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		DF4E7BF8190E427C009C6129 /* Build configuration list for PBXNativeTarget "Start&StopSchoolNetworkAccountTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DF4E7BF9190E427C009C6129 /* Debug */,
+				DF4E7BFA190E427C009C6129 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = DF4E7BB8190E427C009C6129 /* Project object */;
+}
