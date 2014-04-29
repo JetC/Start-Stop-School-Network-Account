@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
-@interface SFViewController : UIViewController
+@interface SFViewController : UIViewController<NSURLSessionDataDelegate>
+
+
 
 @end
