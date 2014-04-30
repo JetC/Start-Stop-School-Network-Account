@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface SFViewController : UIViewController<NSURLSessionDataDelegate>
+@interface SFViewController : UIViewController<NSURLSessionDataDelegate,UITextFieldDelegate>
 
 
 
