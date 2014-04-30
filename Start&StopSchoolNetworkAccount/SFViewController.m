@@ -13,6 +13,11 @@
 @property (weak, nonatomic) IBOutlet UITextField *verificationCodeTextFieldView;
 @property (weak, nonatomic) IBOutlet UIButton *startLoginButton;
 @property (strong, nonatomic) NSString *verificationCode;
+@property (strong, nonatomic) NSString *operationVerifyCode;
+@property (strong, nonatomic) NSString *submitCodeId;
+@property (strong, nonatomic) NSString *comSunFacesVIEW;
+@property (strong, nonatomic) NSString *userAccountIDForSchoolNetwork;
+@property (strong, nonatomic) NSString *userAccountPasswordForSchoolNetwork;
 
 @end
 
@@ -24,7 +29,7 @@
 	// Do any additional setup after loading the view, typically from a nib.
 
     [self loadVerificationCodeImage];
-    
+    _userAccountIDForSchoolNetwork = @"2012301130125";
     
 }
 
@@ -91,7 +96,7 @@
            if(error == nil)
            {
                NSLog(@"成功登陆");
-               [self fetchURLUsingGETWithString:@"https://whu-sb.whu.edu.cn:8443/selfservice/module/userself/web/self_resume.jsf"];
+               [self fetchInfoPreparingForPOST:@"https://whu-sb.whu.edu.cn:8443/selfservice/module/userself/web/self_resume.jsf"];
            }
            else
            {
@@ -104,7 +109,7 @@
 
 }
 
-- (void)fetchURLUsingGETWithString:(NSString *)urlString
+- (void)fetchInfoPreparingForPOST:(NSString *)urlString
 {
     NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@",urlString]];
     NSURLSessionConfiguration *defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
@@ -119,20 +124,14 @@
             if(error == nil)
             {
                 NSLog(@"已接收到Input值");
-                NSLog(@"%@",[[NSString alloc]initWithData:data encoding:kCFStringEncodingUTF8]);
-                NSString *startAccountRecirved = [[NSString alloc]initWithData:data encoding:kCFStringEncodingUTF8];
+                NSString *startAccountContentRecirvedString = [[NSString alloc]initWithData:data encoding:kCFStringEncodingUTF8];
                 NSString *patternOfOperationVerificationCode = @"(?<=type=\"hidden\" name=\"UserOperationForm:operationVerifyCode\" value=\").*(?=\" />)";
-                NSRegularExpression *reg = [NSRegularExpression regularExpressionWithPattern:patternOfOperationVerificationCode options:0 error:&error];
-                NSArray* match = [reg matchesInString:startAccountRecirved options:NSMatchingCompleted range:NSMakeRange(0, [startAccountRecirved length])];
-                NSLog(@"%@",match[0]);
-                if (match.count != 0)
-                {
-                    for (NSTextCheckingResult *matc in match)
-                    {
-                        NSRange range = [matc range];
-                        NSLog(@"%@",[startAccountRecirved substringWithRange:range]);
-                    }  
-                }
+                NSString *patternOfsubmitCodeId = @"(?<=name=\"submitCodeId\" value=\").*(?=\" />)";
+                NSString *patternOfcom_sun_faces_VIEW = @"(?<=id=\"com.sun.faces.VIEW\" value=\").*(?=\" /><input)";
+                _operationVerifyCode = [self analyseStringUsingRegularExpression:startAccountContentRecirvedString usingRegularExpression:patternOfOperationVerificationCode];
+                _submitCodeId = [self analyseStringUsingRegularExpression:startAccountContentRecirvedString usingRegularExpression:patternOfsubmitCodeId];
+                _comSunFacesVIEW = [self analyseStringUsingRegularExpression:startAccountContentRecirvedString usingRegularExpression:patternOfcom_sun_faces_VIEW];
+                [self resumeAccount];
             }
             else
             {
@@ -144,29 +143,50 @@
 
 }
 
-- (void)fetchAllSavedCookie
+- (void)resumeAccount
 {
-    NSHTTPCookieStorage *cookieStorge = [NSHTTPCookieStorage sharedHTTPCookieStorage];
-    for (NSHTTPCookie *cookie in [cookieStorge cookies]) {
-        NSLog(@"Once:%@", cookie);
-    }
+    NSURL *url = [NSURL URLWithString:@"https://whu-sb.whu.edu.cn:8443/selfservice/module/userself/web/self_resume.jsf"];
     
-    NSMutableDictionary *cookieProperties = [NSMutableDictionary dictionary];
-    [cookieProperties setObject:@"CookieName" forKey:NSHTTPCookieName];
-    [cookieProperties setObject:@"CookieValue" forKey:NSHTTPCookieValue];
-    [cookieProperties setObject:@"CookieDomain" forKey:NSHTTPCookieDomain];
-    [cookieProperties setObject:@"CookieOriginURL" forKey:NSHTTPCookieOriginURL];
-    [cookieProperties setObject:@"CookiePath" forKey:NSHTTPCookiePath];
-    [cookieProperties setObject:@"CookieVersion" forKey:NSHTTPCookieVersion];
- 
+    NSURLSessionConfiguration *defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
     
-    for (NSHTTPCookie *cookie in [cookieStorge cookies])
+    NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration: defaultConfigObject delegate: self delegateQueue: nil];
+    NSMutableURLRequest * urlRequest = [NSMutableURLRequest requestWithURL:url];
+    NSString *resString = @"%C8%B7%C8%CF%BB%D6%B8%B4";
+    NSString *params = [NSString stringWithFormat:@"act=init&op=resume&UserOperationForm:targetUserId=%@&UserOperationForm:operationVerifyCode=%@&submitCodeId=%@&UserOperationForm:verify=%@&UserOperationForm:res=%@&com.sun.faces.VIEW=%@&UserOperationForm=UserOperationForm",_userAccountIDForSchoolNetwork,_operationVerifyCode,_submitCodeId,_verificationCode,resString,_comSunFacesVIEW];
+    NSData *data = [params dataUsingEncoding:NSUnicodeStringEncoding];
+    [urlRequest setHTTPBody:data];
+    [urlRequest setHTTPMethod:@"POST"];
+    [urlRequest setHTTPBody:[params dataUsingEncoding:NSUTF8StringEncoding]];
+    [urlRequest setHTTPShouldHandleCookies:YES];
+    
+    NSURLSessionDataTask * dataTask = [defaultSession dataTaskWithRequest:urlRequest completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
     {
-        NSLog(@"Twice:%@", cookie);
-    }
+        NSLog(@"POST Over!");
+    }];
+    [dataTask resume];
+
 }
 
 
+
+- (NSString *)analyseStringUsingRegularExpression:(NSString *)sourceString usingRegularExpression:(NSString *)regularExpression
+{
+    
+    NSRegularExpression *reg = [NSRegularExpression regularExpressionWithPattern:regularExpression options:0 error:nil];
+    NSArray* match = [reg matchesInString:sourceString options:NSMatchingCompleted range:NSMakeRange(0, [sourceString length])];
+    NSLog(@"%@",match[0]);
+    NSString *resultString = [[NSString alloc]init];
+    if (match.count != 0)
+    {
+        for (NSTextCheckingResult *matc in match)
+        {
+            NSRange range = [matc range];
+            NSLog(@"%@",[sourceString substringWithRange:range]);
+            resultString = [sourceString substringWithRange:range];
+        }
+    }
+    return resultString;
+}
 
 
 @end
