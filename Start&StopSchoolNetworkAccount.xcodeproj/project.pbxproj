@@ -471,6 +471,7 @@
 				DF4E7BF7190E427C009C6129 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		DF4E7BF8190E427C009C6129 /* Build configuration list for PBXNativeTarget "Start&StopSchoolNetworkAccountTests" */ = {
 			isa = XCConfigurationList;
@@ -479,6 +480,7 @@
 				DF4E7BFA190E427C009C6129 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

@@ -90,7 +90,7 @@
        {
            if(error == nil)
            {
-               NSLog(@"1");
+               NSLog(@"成功登陆");
                [self fetchURLUsingGETWithString:@"https://whu-sb.whu.edu.cn:8443/selfservice/module/userself/web/self_resume.jsf"];
            }
            else
@@ -118,7 +118,21 @@
         {
             if(error == nil)
             {
-                NSLog(@"2");
+                NSLog(@"已接收到Input值");
+                NSLog(@"%@",[[NSString alloc]initWithData:data encoding:kCFStringEncodingUTF8]);
+                NSString *startAccountRecirved = [[NSString alloc]initWithData:data encoding:kCFStringEncodingUTF8];
+                NSString *patternOfOperationVerificationCode = @"(?<=type=\"hidden\" name=\"UserOperationForm:operationVerifyCode\" value=\").*(?=\" />)";
+                NSRegularExpression *reg = [NSRegularExpression regularExpressionWithPattern:patternOfOperationVerificationCode options:0 error:&error];
+                NSArray* match = [reg matchesInString:startAccountRecirved options:NSMatchingCompleted range:NSMakeRange(0, [startAccountRecirved length])];
+                NSLog(@"%@",match[0]);
+                if (match.count != 0)
+                {
+                    for (NSTextCheckingResult *matc in match)
+                    {
+                        NSRange range = [matc range];
+                        NSLog(@"%@",[startAccountRecirved substringWithRange:range]);
+                    }  
+                }
             }
             else
             {
@@ -144,9 +158,7 @@
     [cookieProperties setObject:@"CookieOriginURL" forKey:NSHTTPCookieOriginURL];
     [cookieProperties setObject:@"CookiePath" forKey:NSHTTPCookiePath];
     [cookieProperties setObject:@"CookieVersion" forKey:NSHTTPCookieVersion];
-        
-//    NSHTTPCookie *cookie = [NSHTTPCookie cookieWithProperties:cookieProperties];
-//    [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookie:cookie];
+ 
     
     for (NSHTTPCookie *cookie in [cookieStorge cookies])
     {
@@ -154,39 +166,7 @@
     }
 }
 
-//- (void)connection:(NSURLConnection *)connection // IN
-//    didReceiveData:(NSData *)data                // IN
-//{
-//    NSString *reply = [[NSString alloc] initWithData:data
-//                                            encoding:NSUTF8StringEncoding];
-//    NSNumber *statusInfo =[[reply JSONValue] valueForKey:@"status"] ;
-//    NSLog(@"reply=====%@",reply);
-//    [reply release];
-//    if ([statusInfo intValue]==1) {
-//        //保存cookie
-//        NSHTTPURLResponse *httpResponse=(NSHTTPURLResponse *)self.responseCopy;
-//        NSDictionary *fields = [httpResponse allHeaderFields ];
-//        NSLog(@"response头内容＝＝＝%@",[fields description]);
-//        //取得cookie
-//        if (self.cookie == nil) {
-//            NSString *tempCookie =[[NSString alloc] initWithString: [fields valueForKey:@"Set-Cookie"]];
-//            self.cookie=tempCookie;
-//            [tempCookie release];
-//            tempCookie=nil;
-//        }
-//        else{
-//            self.cookie = [fields valueForKey:@"Set-Cookie"];
-//        }
-//        
-//        NSLog(@"cookie = %@",self.cookie);
-//        //接受cookie
-//        [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookieAcceptPolicy:NSHTTPCookieAcceptPolicyAlways];
-//        NSLog(@"写入后:%@",[[NSHTTPCookieStorage sharedHTTPCookieStorage]cookies]);
-//    }
 
-+ (NSStringEncoding)GBKStringEncoding
-{
-    return CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingGB_18030_2000);
-}
+
 
 @end
