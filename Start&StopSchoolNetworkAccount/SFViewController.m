@@ -7,61 +7,49 @@
 //
 
 #import "SFViewController.h"
-
+#import "SFRuiJieAccountManager.h"
+//没有保护措施，开始与停止反了会Crash
+//怎么判断校园网状况
 @interface SFViewController ()
+
 @property (weak, nonatomic) IBOutlet UIImageView *verificationCodeImageView;
 @property (weak, nonatomic) IBOutlet UITextField *verificationCodeTextFieldView;
 @property (weak, nonatomic) IBOutlet UIButton *startLoginButton;
-@property (strong, nonatomic) NSString *verificationCode;
-@property (strong, nonatomic) NSString *operationVerifyCode;
-@property (strong, nonatomic) NSString *submitCodeId;
-@property (strong, nonatomic) NSString *comSunFacesVIEW;
-@property (strong, nonatomic) NSString *userAccountIDForSchoolNetwork;
-@property (strong, nonatomic) NSString *userAccountPasswordForSchoolNetwork;
+@property (strong, nonatomic) NSString *userInputedVerificationCode;
 
 @end
 
 @implementation SFViewController
 
++ (instancetype)sharedManager
+{
+    static SFViewController *sharedManager = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        sharedManager = [[self alloc]init];
+    });
+    return sharedManager;
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
-
-    [self loadVerificationCodeImage];
-    _userAccountIDForSchoolNetwork = @"2012301130125";
+        // Do any additional setup after loading the view, typically from a nib.
+    
+    
+    [SFRuiJieAccountManager sharedManager];
+    [SFRuiJieAccountManager sharedManager].userAccountIDForSchoolNetwork = @"2012301130125";
+    [SFRuiJieAccountManager sharedManager].userAccountPasswordForSchoolNetwork = @"204765";
+    [[SFRuiJieAccountManager sharedManager]  loadVerificationCodeImage];
     
 }
 
-
-- (void)loadVerificationCodeImage
+-(void)showVerificationCodeImage
 {
-    NSURL *url = [NSURL URLWithString:@"https://whu-sb.whu.edu.cn:8443/selfservice/common/web/verifycode.jsp"];
-    
-    NSURLSessionConfiguration *defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
-    
-    NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration: defaultConfigObject delegate: self delegateQueue: [NSOperationQueue mainQueue]];
-    
-    NSURLSessionDataTask * dataTask = [defaultSession dataTaskWithURL:url
-    completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-        if(error == nil)
-        {
-            _verificationCodeImageView.image = [UIImage imageWithData:data];
-            NSLog(@"Load Verification Code Image Successfully!");
-        }
-        else
-        {
-            NSLog(@"Error: %@", error);
-        }
-    }];
-    
-    [dataTask resume];
+    _verificationCodeImageView.image = [SFRuiJieAccountManager sharedManager].verificationCodeImage;
 }
 
-- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential))completionHandler
-{
-    completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
-}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -70,171 +58,103 @@
 
 - (IBAction)startLogin:(id)sender
 {
-    _verificationCode = [[NSString alloc]init];
-    _verificationCode = _verificationCodeTextFieldView.text;
-    [self login];
+    _userInputedVerificationCode = [[NSString alloc]init];
+    _userInputedVerificationCode = _verificationCodeTextFieldView.text;
+    [SFRuiJieAccountManager sharedManager].verificationCode = _userInputedVerificationCode;
+    [[SFRuiJieAccountManager sharedManager] switchAccountStatusToResumeOrSuspend:@"resume"];
 }
 
 
-- (void)login
-{
-    NSURL *url = [NSURL URLWithString:@"https://whu-sb.whu.edu.cn:8443/selfservice/module/scgroup/web/login_judge.jsf"];
-    
-    NSURLSessionConfiguration *defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
-    
-    NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration: defaultConfigObject delegate: self delegateQueue: nil];
-    NSMutableURLRequest * urlRequest = [NSMutableURLRequest requestWithURL:url];
-    NSString *params = [NSString stringWithFormat:@"act=add&name=2012301130125&password=204765&verify=%@",_verificationCode];
-    NSData *data = [params dataUsingEncoding:NSUnicodeStringEncoding];
-    [urlRequest setHTTPBody:data];
-    [urlRequest setHTTPMethod:@"POST"];
-    [urlRequest setHTTPBody:[params dataUsingEncoding:NSUTF8StringEncoding]];
-    [urlRequest setHTTPShouldHandleCookies:YES];
+//
+//+ (ZQWlan *)loginUsingUsername:(NSString *)username andPassword:(NSString *)password delegate:(id<ZQWlanDelegate>)delegate
+//{
+//    ZQWlan *wlan = [ZQWlan new];
+//    //!!!
+//    wlan.operationQueue = [[NSOperationQueue alloc] init];
+//    
+//    [NCDC addObserverForName:ZQWlanStatusDidChangeNotification object:nil queue:nil usingBlock:^(NSNotification *note) {
+//        [NCDC removeObserver:wlan];
+//        
+//        ZQWlanStatus status = [(NSNumber *)note.object integerValue];
+//        
+//        if (status==ZQWlanStatusNotWHU_WLAN) {
+//            [delegate wlan:wlan connectResponse:ZQWlanResponseNotWHU_WLAN error:nil];
+//        } else if (status==ZQWlanStatusDidLogin) {
+//            [delegate wlan:wlan connectResponse:ZQWlanResponseDidLogin error:nil];
+//        } else if (status==ZQWlanStatusDidNotLogin) {
+//            
+//            NSURLSessionConfiguration *config = [NSURLSessionConfiguration defaultSessionConfiguration];
+//            config.timeoutIntervalForRequest = 15;
+//            NSURLSession *session = [NSURLSession sessionWithConfiguration:config delegate:wlan delegateQueue:nil];
+//            
+//            NSURL *loginURL = [NSURL URLWithString:@"https://wlan.whu.edu.cn/portal/login"];
+//            NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:loginURL];
+//            request.HTTPMethod = @"POST";
+//            NSString *POSTBody = [NSString stringWithFormat:@"username=%@&password=%@",username,password];
+//            request.HTTPBody = [POSTBody dataUsingEncoding:NSUTF8StringEncoding];
+//            
+//            NSURLSessionTask *loginTask = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+//                if (error) {
+//                    NSLog(@"loginTask error %@", error);
+//                    [delegate wlan:wlan connectResponse:ZQWlanResponseLoginDidFailed error:error];
+//                } else {
+//                    NSString *htmlContent = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+//                    ZQWlanResponse response;
+//                    if ([htmlContent rangeOfString:@"欢迎你"].location != NSNotFound) {
+//                        response = ZQWlanResponseDidLogin;
+//                        [MobClick event:@"WLANConnectionSucceed"];
+//                    } else if ([htmlContent rangeOfString:@"密码不正确"].location != NSNotFound){
+//                        response = ZQWlanResponseWrongPassword;
+//                    } else if ([htmlContent rangeOfString:@"不存在"].location != NSNotFound) {
+//                        response = ZQWlanResponseInvalidUsername;
+//                    } else if ([htmlContent rangeOfString:@"系统繁忙"].location != NSNotFound) {
+//                        response = ZQWlanResponseSystemBusy;
+//                    } else if ([htmlContent rangeOfString:@"同名无线用户已在线"].location != NSNotFound) {
+//                        response = ZQWlanResponseReplicateUserOnWlan;
+//                    } else if ([htmlContent rangeOfString:@"帐号已在线"].location != NSNotFound) {
+//                        response = ZQWlanResponseReplicateUserOnCERNET;
+//                    } else if ([htmlContent rangeOfString:@"包天暂停"].location != NSNotFound) {
+//                        response = ZQWlanResponseServiceDidStopManually;
+//                    } else if ([htmlContent rangeOfString:@"余额不足"].location != NSNotFound) {
+//                        response = ZQWlanResponseOverdue;
+//                    } else {
+//                        response = ZQWlanResponseLoginDidFailed;
+//                        [MobClick event:@"WLANConnectionFailed"];
+//                        NSLog(@"%@",htmlContent);
+//                    }
+//                    [delegate wlan:wlan connectResponse:response error:nil];
+//                    
+//                }
+//            }];
+//            
+//            NSString *URLString = [NSString stringWithFormat:@"https://wlan.whu.edu.cn/portal?cmd=login&switchip=&mac=&ip=%@&essid=WHU-WLAN&url=",[ZQWlan fetchLoaclIP]];
+//            NSURLSessionTask *loadCookieTask = [session dataTaskWithURL:[NSURL URLWithString:URLString] completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+//                if (error) {
+//                    [delegate wlan:wlan connectResponse:ZQWlanResponseLoginDidFailed error:error];
+//                    NSLog(@"WlanResponseLoginDidFailed error %@",error);
+//                } else {
+//                    [loginTask resume];
+//                }
+//            }];
+//            
+//            [delegate wlan:wlan connectResponse:ZQWlanResponseWillLogin error:nil];
+//            [loadCookieTask resume];
+//        }
+//    }];
+//    [delegate wlan:wlan connectResponse:ZQWlanResponseWillCheckStatus error:nil];
+//    [self checkStatus];
+//    return wlan;
+//}
+//
 
-    NSURLSessionDataTask * dataTask = [defaultSession dataTaskWithRequest:urlRequest completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
-       {
-           if(error == nil)
-           {
-               NSLog(@"成功登陆");
-               [self manageSchoolNetworkFor:@"suspend"];
-               
-           }
-           else
-           {
-               NSLog(@"Error: %@", error);
-           }
-       }];
-    
-    [dataTask resume];
 
 
-}
 
-- (void)manageSchoolNetworkFor:(NSString *)resumeOrSuspend
-{
-    NSString *urlString = [[NSString alloc]init];
-    if ([resumeOrSuspend isEqual:@"resume"])
-    {
-        urlString = @"https://whu-sb.whu.edu.cn:8443/selfservice/module/userself/web/self_resume.jsf";
-    }
-    else if ([resumeOrSuspend isEqual:@"suspend"])
-    {
-        urlString = @"https://whu-sb.whu.edu.cn:8443/selfservice/module/userself/web/self_suspend.jsf";
-    }
-    else
-    {
-        NSLog(@"ERROR!");
-    }
-    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@",urlString]];
-    NSURLSessionConfiguration *defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
-    
-    NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration: defaultConfigObject delegate: self delegateQueue: [NSOperationQueue mainQueue]];
-    NSMutableURLRequest * urlRequest = [NSMutableURLRequest requestWithURL:url];
-    [urlRequest setHTTPMethod:@"GET"];
-    [urlRequest setHTTPShouldHandleCookies:YES];
-    
-    NSURLSessionDataTask * dataTask = [defaultSession dataTaskWithRequest:urlRequest completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
-        {
-            if(error == nil)
-            {
-                NSLog(@"已接收到Input值");
-                NSString *startAccountContentRecirvedString = [[NSString alloc]initWithData:data encoding:kCFStringEncodingUTF8];
-                NSString *patternOfOperationVerificationCode = @"(?<=type=\"hidden\" name=\"UserOperationForm:operationVerifyCode\" value=\").*(?=\" />)";
-                NSString *patternOfsubmitCodeId = @"(?<=name=\"submitCodeId\" value=\").*(?=\" />)";
-                NSString *patternOfcom_sun_faces_VIEW = @"(?<=id=\"com.sun.faces.VIEW\" value=\").*(?=\" /><input)";
-                _operationVerifyCode = [self analyseStringUsingRegularExpression:startAccountContentRecirvedString usingRegularExpression:patternOfOperationVerificationCode];
-                _submitCodeId = [self analyseStringUsingRegularExpression:startAccountContentRecirvedString usingRegularExpression:patternOfsubmitCodeId];
-                _comSunFacesVIEW = [self analyseStringUsingRegularExpression:startAccountContentRecirvedString usingRegularExpression:patternOfcom_sun_faces_VIEW];
-                if ([resumeOrSuspend isEqual:@"resume"])
-                {
-                    [self resumeAccount];
-                }
-                else if ([resumeOrSuspend isEqual:@"suspend"])
-                {
-                    [self suspendAccount];
-                }
-                else
-                {
-                    NSLog(@"ERROR!");
-                }
-            }
-            else
-            {
-                NSLog(@"Error: %@", error);
-            }
-        }];
-    
-    [dataTask resume];
 
-}
 
-- (void)resumeAccount
-{
-    NSURL *url = [NSURL URLWithString:@"https://whu-sb.whu.edu.cn:8443/selfservice/module/userself/web/self_resume.jsf"];
-    
-    NSURLSessionConfiguration *defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
-    
-    NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration: defaultConfigObject delegate: self delegateQueue: nil];
-    NSMutableURLRequest * urlRequest = [NSMutableURLRequest requestWithURL:url];
-    NSString *resString = @"%C8%B7%C8%CF%BB%D6%B8%B4";
-    NSString *params = [NSString stringWithFormat:@"act=init&op=resume&UserOperationForm:targetUserId=%@&UserOperationForm:operationVerifyCode=%@&submitCodeId=%@&UserOperationForm:verify=%@&UserOperationForm:res=%@&com.sun.faces.VIEW=%@&UserOperationForm=UserOperationForm",_userAccountIDForSchoolNetwork,_operationVerifyCode,_submitCodeId,_verificationCode,resString,_comSunFacesVIEW];
-    NSData *data = [params dataUsingEncoding:NSUnicodeStringEncoding];
-    [urlRequest setHTTPBody:data];
-    [urlRequest setHTTPMethod:@"POST"];
-    [urlRequest setHTTPBody:[params dataUsingEncoding:NSUTF8StringEncoding]];
-    [urlRequest setHTTPShouldHandleCookies:YES];
-    
-    NSURLSessionDataTask * dataTask = [defaultSession dataTaskWithRequest:urlRequest completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
-    {
-        NSLog(@"POST Over!");
-    }];
-    [dataTask resume];
 
-}
 
-- (void)suspendAccount
-{
-    NSURL *url = [NSURL URLWithString:@"https://whu-sb.whu.edu.cn:8443/selfservice/module/userself/web/self_suspend.jsf"];
-    
-    NSURLSessionConfiguration *defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
-    
-    NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration: defaultConfigObject delegate: self delegateQueue: nil];
-    NSMutableURLRequest * urlRequest = [NSMutableURLRequest requestWithURL:url];
-    NSString *suspendString = @"%C8%B7%C8%CF%D4%DD%CD%A3";
-    NSString *params = [NSString stringWithFormat:@"act=init&op=suspend&UserOperationForm:targetUserId=%@&UserOperationForm:operationVerifyCode=%@&submitCodeId=%@&UserOperationForm:verify=%@&UserOperationForm:sus=%@&com.sun.faces.VIEW=%@&UserOperationForm=UserOperationForm",_userAccountIDForSchoolNetwork,_operationVerifyCode,_submitCodeId,_verificationCode,suspendString,_comSunFacesVIEW];
-    NSLog(@"SUSpend:%@",params);
-    NSData *data = [params dataUsingEncoding:NSUnicodeStringEncoding];
-    [urlRequest setHTTPBody:data];
-    [urlRequest setHTTPMethod:@"POST"];
-    [urlRequest setHTTPBody:[params dataUsingEncoding:NSUTF8StringEncoding]];
-    [urlRequest setHTTPShouldHandleCookies:YES];
-    
-    NSURLSessionDataTask * dataTask = [defaultSession dataTaskWithRequest:urlRequest completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
-    {
-        NSLog(@"POST Over!");
-    }];
-    [dataTask resume];
-    
-}
 
-- (NSString *)analyseStringUsingRegularExpression:(NSString *)sourceString usingRegularExpression:(NSString *)regularExpression
-{
-    
-    NSRegularExpression *reg = [NSRegularExpression regularExpressionWithPattern:regularExpression options:0 error:nil];
-    NSArray* match = [reg matchesInString:sourceString options:NSMatchingCompleted range:NSMakeRange(0, [sourceString length])];
-    NSLog(@"%@",match[0]);
-    NSString *resultString = [[NSString alloc]init];
-    if (match.count != 0)
-    {
-        for (NSTextCheckingResult *matc in match)
-        {
-            NSRange range = [matc range];
-            NSLog(@"%@",[sourceString substringWithRange:range]);
-            resultString = [sourceString substringWithRange:range];
-        }
-    }
-    return resultString;
-}
 
 
 @end

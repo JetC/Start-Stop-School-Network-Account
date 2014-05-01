@@ -8,8 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
-@interface SFViewController : UIViewController<NSURLSessionDataDelegate,UITextFieldDelegate>
+@interface SFViewController : UIViewController<UITextFieldDelegate>
 
++ (instancetype)sharedManager;
 
+- (void)showVerificationCodeImage;
 
 @end
