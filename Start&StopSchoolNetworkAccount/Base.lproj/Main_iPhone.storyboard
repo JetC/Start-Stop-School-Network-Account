@@ -8,7 +8,7 @@
         <scene sceneID="ZHF-uu-p8K">
             <objects>
                 <tabBarController definesPresentationContext="YES" id="39Q-ds-ODY" sceneMemberID="viewController">
-                    <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
+                    <nil key="simulatedBottomBarMetrics"/>
                     <tabBar key="tabBar" contentMode="scaleToFill" id="GLI-oB-vxX">
                         <rect key="frame" x="129" y="330" width="163" height="49"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
@@ -67,7 +67,7 @@
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Cqd-jI-xmR">
                                 <rect key="frame" x="240" y="149" width="60" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="开始登陆">
+                                <state key="normal" title="开始登录">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
@@ -80,7 +80,7 @@
                     <tabBarItem key="tabBarItem" title="Item" id="eIC-lr-ei2"/>
                     <connections>
                         <outlet property="startLoginButton" destination="Cqd-jI-xmR" id="xKM-XA-gSJ"/>
-                        <outlet property="verificationCodeImageView" destination="YQs-g4-f5V" id="zjM-vU-3ky"/>
+                        <outlet property="verificationCodeImageView" destination="YQs-g4-f5V" id="UKq-eC-YJX"/>
                         <outlet property="verificationCodeTextFieldView" destination="sqn-Gb-vDd" id="UFk-TM-2YI"/>
                     </connections>
                 </viewController>

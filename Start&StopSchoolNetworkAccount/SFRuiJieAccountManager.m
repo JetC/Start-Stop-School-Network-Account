@@ -37,6 +37,10 @@
     {
         if(error == nil)
         {
+            if (_verificationCodeImage == nil)
+            {
+                _verificationCodeImage = [[UIImage alloc]init];
+            }
             _verificationCodeImage = [UIImage imageWithData:data];
             NSLog(@"Load Verification Code Image Successfully!");
             [[SFViewController sharedManager] showVerificationCodeImage];

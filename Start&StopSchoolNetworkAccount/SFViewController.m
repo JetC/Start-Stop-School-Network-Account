@@ -11,8 +11,7 @@
 //没有保护措施，开始与停止反了会Crash
 //怎么判断校园网状况
 @interface SFViewController ()
-
-@property (weak, nonatomic) IBOutlet UIImageView *verificationCodeImageView;
+@property (strong, nonatomic) IBOutlet UIImageView *verificationCodeImageView;
 @property (weak, nonatomic) IBOutlet UITextField *verificationCodeTextFieldView;
 @property (weak, nonatomic) IBOutlet UIButton *startLoginButton;
 @property (strong, nonatomic) NSString *userInputedVerificationCode;
@@ -36,7 +35,6 @@
     [super viewDidLoad];
         // Do any additional setup after loading the view, typically from a nib.
     
-    
     [SFRuiJieAccountManager sharedManager];
     [SFRuiJieAccountManager sharedManager].userAccountIDForSchoolNetwork = @"2012301130125";
     [SFRuiJieAccountManager sharedManager].userAccountPasswordForSchoolNetwork = @"204765";
@@ -46,6 +44,10 @@
 
 -(void)showVerificationCodeImage
 {
+   
+    NSLog(@"%@",[SFRuiJieAccountManager sharedManager].verificationCodeImage);
+    _verificationCodeImageView = [[UIImageView alloc]init];
+
     _verificationCodeImageView.image = [SFRuiJieAccountManager sharedManager].verificationCodeImage;
 }
 
