@@ -15,11 +15,15 @@
 @end
 
 @interface SFRuiJieAccountManager : NSObject
-
+/**存放验证码图片*/
 @property (strong, nonatomic) UIImage *verificationCodeImage;
+/**存放用户校园网账号 */
 @property (strong, nonatomic) NSString *userAccountIDForSchoolNetwork;
+/**存放用户校园网密码*/
 @property (strong, nonatomic) NSString *userAccountPasswordForSchoolNetwork;
+/**存放ViewController中返回的由用户输入的验证码*/
 @property (strong, nonatomic) NSString *verificationCode;
+
 @property (strong, nonatomic) id <SFRuiJieDelegate>ruijieDelegate;
 
 + (instancetype)sharedManager;

@@ -57,6 +57,9 @@
     [[SFRuiJieAccountManager sharedManager] switchAccountStatusToResumeOrSuspend:@"suspend"];
 }
 
+/**
+ *  获取当前TextField中用户输入的验证码并传值给锐捷的Model
+ */
 - (void)submitVerificationCode
 {
     _userInputedVerificationCode = [[NSString alloc]init];
