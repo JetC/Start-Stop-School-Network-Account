@@ -54,12 +54,12 @@
     [dataTask resume];
 }
 
-- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential))completionHandler
+- (void)switchAccountStatusToResumeOrSuspend:(NSString *)resumeOrSuspend
 {
-    completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+    [self loginAccountManagingSystemFor:resumeOrSuspend];
 }
 
-- (void)switchAccountStatusToResumeOrSuspend:(NSString *)resumeOrSuspend;
+- (void)loginAccountManagingSystemFor:(NSString *)resumeOrSuspend
 {
     resumeOrSuspend = [resumeOrSuspend lowercaseString];
     NSURL *url = [NSURL URLWithString:@"https://whu-sb.whu.edu.cn:8443/selfservice/module/scgroup/web/login_judge.jsf"];
@@ -80,7 +80,7 @@
             NSLog(@"成功登陆");
             
 //            [self checkUserAccountStatus];
-            [self manageSchoolNetworkFor:[NSString stringWithFormat:@"%@",resumeOrSuspend]];
+            [self fetchAuthorizationInfoFor:[NSString stringWithFormat:@"%@",resumeOrSuspend]];
         }
         else
         {
@@ -91,9 +91,9 @@
     [dataTask resume];
 }
 
-- (void)manageSchoolNetworkFor:(NSString *)resumeOrSuspend
+- (void)fetchAuthorizationInfoFor:(NSString *)resumeOrSuspend
 {
-    NSString *urlString = [[NSString alloc]init];
+    NSString *urlString;
     if ([resumeOrSuspend isEqual:@"resume"])
     {
         urlString = @"https://whu-sb.whu.edu.cn:8443/selfservice/module/userself/web/self_resume.jsf";
@@ -125,18 +125,9 @@
             _operationVerifyCode = [self analyseStringUsingRegularExpression:startAccountContentRecirvedString usingRegularExpression:patternOfOperationVerificationCode];
             _submitCodeId = [self analyseStringUsingRegularExpression:startAccountContentRecirvedString usingRegularExpression:patternOfsubmitCodeId];
             _comSunFacesVIEW = [self analyseStringUsingRegularExpression:startAccountContentRecirvedString usingRegularExpression:patternOfcom_sun_faces_VIEW];
-            if ([resumeOrSuspend isEqual:@"resume"])
-            {
-                [self resumeAccount];
-            }
-            else if ([resumeOrSuspend isEqual:@"suspend"])
-            {
-                [self suspendAccount];
-            }
-            else
-            {
-                NSLog(@"ERROR!");
-            }
+            
+            [self changeAccountStatusTo:resumeOrSuspend];
+            
         }
         else
         {
@@ -148,22 +139,32 @@
     
 }
 
-
-- (void)changeAccountStatusTo:(NSString *)resumeOrSuspend
+- (void)changeAccountStatusTo:(NSString *)stringFromResumeOrSuspend
 {
-    
-}
-
-
-- (void)suspendAccount
-{
-    NSURL *url = [NSURL URLWithString:@"https://whu-sb.whu.edu.cn:8443/selfservice/module/userself/web/self_suspend.jsf"];
+    NSString *urlString;
+    NSString *operationGB2312NameString;
+    NSString *stringFromSusOrRes;
+    NSString *operationChineseNameString;
+    if ([[stringFromResumeOrSuspend lowercaseString] isEqualToString:@"resume"])
+    {
+        urlString = @"https://whu-sb.whu.edu.cn:8443/selfservice/module/userself/web/self_resume.jsf";
+        operationGB2312NameString = @"%C8%B7%C8%CF%BB%D6%B8%B4";
+        stringFromSusOrRes = @"res";
+        operationChineseNameString = @"启用";
+    }
+    else if ([[stringFromResumeOrSuspend lowercaseString] isEqualToString:@"suspend"])
+    {
+        urlString = @"https://whu-sb.whu.edu.cn:8443/selfservice/module/userself/web/self_suspend.jsf";
+        operationGB2312NameString = @"%C8%B7%C8%CF%D4%DD%CD%A3";
+        stringFromSusOrRes = @"sus";
+        operationChineseNameString = @"停用";
+    }
+    NSURL *url = [NSURL URLWithString:urlString];
     NSURLSessionConfiguration *defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
     NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration: defaultConfigObject delegate: self delegateQueue: nil];
     NSMutableURLRequest * urlRequest = [NSMutableURLRequest requestWithURL:url];
-    NSString *suspendString = @"%C8%B7%C8%CF%D4%DD%CD%A3";
-    NSString *params = [NSString stringWithFormat:@"act=init&op=suspend&UserOperationForm:targetUserId=%@&UserOperationForm:operationVerifyCode=%@&submitCodeId=%@&UserOperationForm:verify=%@&UserOperationForm:sus=%@&com.sun.faces.VIEW=%@&UserOperationForm=UserOperationForm",_userAccountIDForSchoolNetwork,_operationVerifyCode,_submitCodeId,_verificationCode,suspendString,_comSunFacesVIEW];
-    //    NSLog(@"Suspend:%@",params);
+    NSString *suspendString = operationGB2312NameString;
+    NSString *params = [NSString stringWithFormat:@"act=init&op=%@&UserOperationForm:targetUserId=%@&UserOperationForm:operationVerifyCode=%@&submitCodeId=%@&UserOperationForm:verify=%@&UserOperationForm:%@=%@&com.sun.faces.VIEW=%@&UserOperationForm=UserOperationForm",stringFromResumeOrSuspend,_userAccountIDForSchoolNetwork,_operationVerifyCode,_submitCodeId,_verificationCode,stringFromSusOrRes,suspendString,_comSunFacesVIEW];
     NSData *data = [params dataUsingEncoding:NSUnicodeStringEncoding];
     [urlRequest setHTTPBody:data];
     [urlRequest setHTTPMethod:@"POST"];
@@ -176,54 +177,90 @@
         
         if ([completionString rangeOfString:@"alert"].location != NSNotFound)
         {
-            NSLog(@"成功停用");
-            NSLog(@"%@",completionString);
-            NSLog(@"%d",[completionString rangeOfString:@"alert"].location);
+            NSLog(@"成功%@",operationChineseNameString);
+//            NSLog(@"%@",completionString);
+//            NSLog(@"%d",[completionString rangeOfString:@"alert"].location);
             [_ruijieDelegate showSuccessAlertView];
         }
         else
         {
-            NSLog(@"停用失败请重试");
+            NSLog(@"%@失败请重试",operationChineseNameString);
         }
     }];
     [dataTask resume];
     NSLog(@"POST Over!");
     
-}
-
-- (void)resumeAccount
-{
-    NSURL *url = [NSURL URLWithString:@"https://whu-sb.whu.edu.cn:8443/selfservice/module/userself/web/self_resume.jsf"];
-    NSURLSessionConfiguration *defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
-    NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration: defaultConfigObject delegate: self delegateQueue: nil];
-    NSMutableURLRequest * urlRequest = [NSMutableURLRequest requestWithURL:url];
-    NSString *resString = @"%C8%B7%C8%CF%BB%D6%B8%B4";
-    NSString *params = [NSString stringWithFormat:@"act=init&op=resume&UserOperationForm:targetUserId=%@&UserOperationForm:operationVerifyCode=%@&submitCodeId=%@&UserOperationForm:verify=%@&UserOperationForm:res=%@&com.sun.faces.VIEW=%@&UserOperationForm=UserOperationForm",_userAccountIDForSchoolNetwork,_operationVerifyCode,_submitCodeId,_verificationCode,resString,_comSunFacesVIEW];
-    NSData *data = [params dataUsingEncoding:NSUnicodeStringEncoding];
-    [urlRequest setHTTPBody:data];
-    [urlRequest setHTTPMethod:@"POST"];
-    [urlRequest setHTTPBody:[params dataUsingEncoding:NSUTF8StringEncoding]];
-    [urlRequest setHTTPShouldHandleCookies:YES];
-    
-    NSURLSessionDataTask * dataTask = [defaultSession dataTaskWithRequest:urlRequest completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
-    {
-        NSString * completionString= [[NSString alloc]initWithData:data encoding:kCFStringEncodingUTF8];
-        if ([completionString rangeOfString:@"alert"].location != NSNotFound)
-        {
-            NSLog(@"成功停用");
-            NSLog(@"%@",completionString);
-            NSLog(@"%d",[completionString rangeOfString:@"alert"].location);
-            [_ruijieDelegate showSuccessAlertView];
-        }
-        else
-        {
-            NSLog(@"停用失败请重试");
-        }
-    }];
-    [dataTask resume];
-    NSLog(@"POST Over!");
     
 }
+//- (void)suspendAccount
+//{
+//    NSURL *url = [NSURL URLWithString:@"https://whu-sb.whu.edu.cn:8443/selfservice/module/userself/web/self_suspend.jsf"];
+//    NSURLSessionConfiguration *defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
+//    NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration: defaultConfigObject delegate: self delegateQueue: nil];
+//    NSMutableURLRequest * urlRequest = [NSMutableURLRequest requestWithURL:url];
+//    NSString *suspendString = @"%C8%B7%C8%CF%D4%DD%CD%A3";
+//    NSString *params = [NSString stringWithFormat:@"act=init&op=suspend&UserOperationForm:targetUserId=%@&UserOperationForm:operationVerifyCode=%@&submitCodeId=%@&UserOperationForm:verify=%@&UserOperationForm:sus=%@&com.sun.faces.VIEW=%@&UserOperationForm=UserOperationForm",_userAccountIDForSchoolNetwork,_operationVerifyCode,_submitCodeId,_verificationCode,suspendString,_comSunFacesVIEW];
+//    //    NSLog(@"Suspend:%@",params);
+//    NSData *data = [params dataUsingEncoding:NSUnicodeStringEncoding];
+//    [urlRequest setHTTPBody:data];
+//    [urlRequest setHTTPMethod:@"POST"];
+//    [urlRequest setHTTPBody:[params dataUsingEncoding:NSUTF8StringEncoding]];
+//    [urlRequest setHTTPShouldHandleCookies:YES];
+//    
+//    NSURLSessionDataTask * dataTask = [defaultSession dataTaskWithRequest:urlRequest completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
+//    {
+//        NSString * completionString= [[NSString alloc]initWithData:data encoding:kCFStringEncodingUTF8];
+//        
+//        if ([completionString rangeOfString:@"alert"].location != NSNotFound)
+//        {
+//            NSLog(@"成功停用");
+//            NSLog(@"%@",completionString);
+//            NSLog(@"%d",[completionString rangeOfString:@"alert"].location);
+//            [_ruijieDelegate showSuccessAlertView];
+//        }
+//        else
+//        {
+//            NSLog(@"停用失败请重试");
+//        }
+//    }];
+//    [dataTask resume];
+//    NSLog(@"POST Over!");
+//    
+//}
+//
+//- (void)resumeAccount
+//{
+//    NSURL *url = [NSURL URLWithString:@"https://whu-sb.whu.edu.cn:8443/selfservice/module/userself/web/self_resume.jsf"];
+//    NSURLSessionConfiguration *defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
+//    NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration: defaultConfigObject delegate: self delegateQueue: nil];
+//    NSMutableURLRequest * urlRequest = [NSMutableURLRequest requestWithURL:url];
+//    NSString *resString = @"%C8%B7%C8%CF%BB%D6%B8%B4";
+//    NSString *params = [NSString stringWithFormat:@"act=init&op=resume&UserOperationForm:targetUserId=%@&UserOperationForm:operationVerifyCode=%@&submitCodeId=%@&UserOperationForm:verify=%@&UserOperationForm:res=%@&com.sun.faces.VIEW=%@&UserOperationForm=UserOperationForm",_userAccountIDForSchoolNetwork,_operationVerifyCode,_submitCodeId,_verificationCode,resString,_comSunFacesVIEW];
+//    NSData *data = [params dataUsingEncoding:NSUnicodeStringEncoding];
+//    [urlRequest setHTTPBody:data];
+//    [urlRequest setHTTPMethod:@"POST"];
+//    [urlRequest setHTTPBody:[params dataUsingEncoding:NSUTF8StringEncoding]];
+//    [urlRequest setHTTPShouldHandleCookies:YES];
+//    
+//    NSURLSessionDataTask * dataTask = [defaultSession dataTaskWithRequest:urlRequest completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
+//    {
+//        NSString * completionString= [[NSString alloc]initWithData:data encoding:kCFStringEncodingUTF8];
+//        if ([completionString rangeOfString:@"alert"].location != NSNotFound)
+//        {
+//            NSLog(@"成功停用");
+//            NSLog(@"%@",completionString);
+//            NSLog(@"%d",[completionString rangeOfString:@"alert"].location);
+//            [_ruijieDelegate showSuccessAlertView];
+//        }
+//        else
+//        {
+//            NSLog(@"停用失败请重试");
+//        }
+//    }];
+//    [dataTask resume];
+//    NSLog(@"POST Over!");
+//    
+//}
 
 
 
@@ -262,6 +299,11 @@
     }];
     
     [dataTask resume];
+}
+
+- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential))completionHandler
+{
+    completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
 }
 
 @end
