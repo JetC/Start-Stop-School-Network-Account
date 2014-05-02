@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		DF2222321911CF0900695D99 /* SFDigitalChinaViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DF2222311911CF0900695D99 /* SFDigitalChinaViewController.m */; };
+		DF1515B219140001001B1A2D /* SFDigitalChinaAccountManager.m in Sources */ = {isa = PBXBuildFile; fileRef = DF1515B119140001001B1A2D /* SFDigitalChinaAccountManager.m */; };
 		DF2222351911D2CC00695D99 /* SFRuiJieAccountManager.m in Sources */ = {isa = PBXBuildFile; fileRef = DF2222341911D2CC00695D99 /* SFRuiJieAccountManager.m */; };
 		DF4E7BC4190E427C009C6129 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF4E7BC3190E427C009C6129 /* Foundation.framework */; };
 		DF4E7BC6190E427C009C6129 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF4E7BC5190E427C009C6129 /* CoreGraphics.framework */; };
@@ -37,8 +37,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		DF2222301911CF0900695D99 /* SFDigitalChinaViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SFDigitalChinaViewController.h; sourceTree = "<group>"; };
-		DF2222311911CF0900695D99 /* SFDigitalChinaViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SFDigitalChinaViewController.m; sourceTree = "<group>"; };
+		DF1515B019140001001B1A2D /* SFDigitalChinaAccountManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SFDigitalChinaAccountManager.h; sourceTree = "<group>"; };
+		DF1515B119140001001B1A2D /* SFDigitalChinaAccountManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SFDigitalChinaAccountManager.m; sourceTree = "<group>"; };
 		DF2222331911D2CC00695D99 /* SFRuiJieAccountManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SFRuiJieAccountManager.h; sourceTree = "<group>"; };
 		DF2222341911D2CC00695D99 /* SFRuiJieAccountManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SFRuiJieAccountManager.m; sourceTree = "<group>"; };
 		DF4E7BC0190E427C009C6129 /* Start&StopSchoolNetworkAccount.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Start&StopSchoolNetworkAccount.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -126,10 +126,10 @@
 				DF4E7BD8190E427C009C6129 /* Main_iPad.storyboard */,
 				DF4E7BDB190E427C009C6129 /* SFViewController.h */,
 				DF4E7BDC190E427C009C6129 /* SFViewController.m */,
-				DF2222301911CF0900695D99 /* SFDigitalChinaViewController.h */,
-				DF2222311911CF0900695D99 /* SFDigitalChinaViewController.m */,
 				DF2222331911D2CC00695D99 /* SFRuiJieAccountManager.h */,
 				DF2222341911D2CC00695D99 /* SFRuiJieAccountManager.m */,
+				DF1515B019140001001B1A2D /* SFDigitalChinaAccountManager.h */,
+				DF1515B119140001001B1A2D /* SFDigitalChinaAccountManager.m */,
 				DF4E7BDE190E427C009C6129 /* Images.xcassets */,
 				DF4E7BCA190E427C009C6129 /* Supporting Files */,
 			);
@@ -264,9 +264,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DF1515B219140001001B1A2D /* SFDigitalChinaAccountManager.m in Sources */,
 				DF4E7BD0190E427C009C6129 /* main.m in Sources */,
 				DF4E7BDD190E427C009C6129 /* SFViewController.m in Sources */,
-				DF2222321911CF0900695D99 /* SFDigitalChinaViewController.m in Sources */,
 				DF4E7BD4190E427C009C6129 /* SFAppDelegate.m in Sources */,
 				DF2222351911D2CC00695D99 /* SFRuiJieAccountManager.m in Sources */,
 			);
