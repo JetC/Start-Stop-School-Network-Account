@@ -43,7 +43,7 @@
             }
             _verificationCodeImage = [UIImage imageWithData:data];
             NSLog(@"Load Verification Code Image Successfully!");
-            [[SFViewController sharedManager] showVerificationCodeImage];
+            [_ruijieDelegate showVerificationCodeImage];
         }
         else
         {
@@ -61,6 +61,7 @@
 
 - (void)switchAccountStatusToResumeOrSuspend:(NSString *)resumeOrSuspend;
 {
+    resumeOrSuspend = [resumeOrSuspend lowercaseString];
     NSURL *url = [NSURL URLWithString:@"https://whu-sb.whu.edu.cn:8443/selfservice/module/scgroup/web/login_judge.jsf"];
     NSURLSessionConfiguration *defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
     NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration: defaultConfigObject delegate: self delegateQueue: nil];
@@ -103,7 +104,7 @@
     }
     else
     {
-        NSLog(@"ERROR!");
+        NSLog(@"Resume||Suspend String ERROR!");
     }
     NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@",urlString]];
     NSURLSessionConfiguration *defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
@@ -147,6 +148,49 @@
     
 }
 
+
+- (void)changeAccountStatusTo:(NSString *)resumeOrSuspend
+{
+    
+}
+
+
+- (void)suspendAccount
+{
+    NSURL *url = [NSURL URLWithString:@"https://whu-sb.whu.edu.cn:8443/selfservice/module/userself/web/self_suspend.jsf"];
+    NSURLSessionConfiguration *defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
+    NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration: defaultConfigObject delegate: self delegateQueue: nil];
+    NSMutableURLRequest * urlRequest = [NSMutableURLRequest requestWithURL:url];
+    NSString *suspendString = @"%C8%B7%C8%CF%D4%DD%CD%A3";
+    NSString *params = [NSString stringWithFormat:@"act=init&op=suspend&UserOperationForm:targetUserId=%@&UserOperationForm:operationVerifyCode=%@&submitCodeId=%@&UserOperationForm:verify=%@&UserOperationForm:sus=%@&com.sun.faces.VIEW=%@&UserOperationForm=UserOperationForm",_userAccountIDForSchoolNetwork,_operationVerifyCode,_submitCodeId,_verificationCode,suspendString,_comSunFacesVIEW];
+    //    NSLog(@"Suspend:%@",params);
+    NSData *data = [params dataUsingEncoding:NSUnicodeStringEncoding];
+    [urlRequest setHTTPBody:data];
+    [urlRequest setHTTPMethod:@"POST"];
+    [urlRequest setHTTPBody:[params dataUsingEncoding:NSUTF8StringEncoding]];
+    [urlRequest setHTTPShouldHandleCookies:YES];
+    
+    NSURLSessionDataTask * dataTask = [defaultSession dataTaskWithRequest:urlRequest completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
+    {
+        NSString * completionString= [[NSString alloc]initWithData:data encoding:kCFStringEncodingUTF8];
+        
+        if ([completionString rangeOfString:@"alert"].location != NSNotFound)
+        {
+            NSLog(@"成功停用");
+            NSLog(@"%@",completionString);
+            NSLog(@"%d",[completionString rangeOfString:@"alert"].location);
+            [_ruijieDelegate showSuccessAlertView];
+        }
+        else
+        {
+            NSLog(@"停用失败请重试");
+        }
+    }];
+    [dataTask resume];
+    NSLog(@"POST Over!");
+    
+}
+
 - (void)resumeAccount
 {
     NSURL *url = [NSURL URLWithString:@"https://whu-sb.whu.edu.cn:8443/selfservice/module/userself/web/self_resume.jsf"];
@@ -163,42 +207,31 @@
     
     NSURLSessionDataTask * dataTask = [defaultSession dataTaskWithRequest:urlRequest completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
     {
-        NSLog(@"POST Over!");
+        NSString * completionString= [[NSString alloc]initWithData:data encoding:kCFStringEncodingUTF8];
+        if ([completionString rangeOfString:@"alert"].location != NSNotFound)
+        {
+            NSLog(@"成功停用");
+            NSLog(@"%@",completionString);
+            NSLog(@"%d",[completionString rangeOfString:@"alert"].location);
+            [_ruijieDelegate showSuccessAlertView];
+        }
+        else
+        {
+            NSLog(@"停用失败请重试");
+        }
     }];
     [dataTask resume];
+    NSLog(@"POST Over!");
     
 }
 
-- (void)suspendAccount
-{
-    NSURL *url = [NSURL URLWithString:@"https://whu-sb.whu.edu.cn:8443/selfservice/module/userself/web/self_suspend.jsf"];
-    
-    NSURLSessionConfiguration *defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
-    
-    NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration: defaultConfigObject delegate: self delegateQueue: nil];
-    NSMutableURLRequest * urlRequest = [NSMutableURLRequest requestWithURL:url];
-    NSString *suspendString = @"%C8%B7%C8%CF%D4%DD%CD%A3";
-    NSString *params = [NSString stringWithFormat:@"act=init&op=suspend&UserOperationForm:targetUserId=%@&UserOperationForm:operationVerifyCode=%@&submitCodeId=%@&UserOperationForm:verify=%@&UserOperationForm:sus=%@&com.sun.faces.VIEW=%@&UserOperationForm=UserOperationForm",_userAccountIDForSchoolNetwork,_operationVerifyCode,_submitCodeId,_verificationCode,suspendString,_comSunFacesVIEW];
-    NSLog(@"SUSpend:%@",params);
-    NSData *data = [params dataUsingEncoding:NSUnicodeStringEncoding];
-    [urlRequest setHTTPBody:data];
-    [urlRequest setHTTPMethod:@"POST"];
-    [urlRequest setHTTPBody:[params dataUsingEncoding:NSUTF8StringEncoding]];
-    [urlRequest setHTTPShouldHandleCookies:YES];
-    
-    NSURLSessionDataTask * dataTask = [defaultSession dataTaskWithRequest:urlRequest completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
-    {
-        NSLog(@"POST Over!");
-    }];
-    [dataTask resume];
-    
-}
+
+
 
 - (NSString *)analyseStringUsingRegularExpression:(NSString *)sourceString usingRegularExpression:(NSString *)regularExpression
 {
     NSRegularExpression *reg = [NSRegularExpression regularExpressionWithPattern:regularExpression options:0 error:nil];
     NSArray* match = [reg matchesInString:sourceString options:0 range:NSMakeRange(0, [sourceString length])];
-//    NSLog(@"%@",match[0]);
     NSString *resultString = [[NSString alloc]init];
     if (match.count != 0)
     {

@@ -10,8 +10,5 @@
 
 @interface SFViewController : UIViewController<UITextFieldDelegate>
 
-+ (instancetype)sharedManager;
-
-- (void)showVerificationCodeImage;
 
 @end

@@ -8,9 +8,11 @@
 
 #import "SFViewController.h"
 #import "SFRuiJieAccountManager.h"
-//没有保护措施，开始与停止反了会Crash
-//怎么判断校园网状况
-@interface SFViewController ()
+// !!!:怎么判断校园网状况
+//TODO: hhh
+//???:ooo
+
+@interface SFViewController ()<SFRuiJieDelegate>
 @property (strong, nonatomic) IBOutlet UIImageView *verificationCodeImageView;
 @property (weak, nonatomic) IBOutlet UITextField *verificationCodeTextFieldView;
 @property (weak, nonatomic) IBOutlet UIButton *startLoginButton;
@@ -20,33 +22,23 @@
 
 @implementation SFViewController
 
-+ (instancetype)sharedManager
-{
-    static SFViewController *sharedManager = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        sharedManager = [[self alloc]init];
-    });
-    return sharedManager;
-}
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-        // Do any additional setup after loading the view, typically from a nib.
     
-    [SFRuiJieAccountManager sharedManager];
     [SFRuiJieAccountManager sharedManager].userAccountIDForSchoolNetwork = @"2012301130125";
     [SFRuiJieAccountManager sharedManager].userAccountPasswordForSchoolNetwork = @"204765";
     [[SFRuiJieAccountManager sharedManager]  loadVerificationCodeImage];
+    [SFRuiJieAccountManager sharedManager].ruijieDelegate = self;
     
 }
 
 -(void)showVerificationCodeImage
 {
-   
-    NSLog(@"%@",[SFRuiJieAccountManager sharedManager].verificationCodeImage);
-    _verificationCodeImageView = [[UIImageView alloc]init];
+    if (_verificationCodeImageView == nil)
+    {
+        _verificationCodeImageView = [[UIImageView alloc]init];
+    }
 
     _verificationCodeImageView.image = [SFRuiJieAccountManager sharedManager].verificationCodeImage;
 }
@@ -60,10 +52,24 @@
 
 - (IBAction)startLogin:(id)sender
 {
+    [self submitVerificationCode];
+    
+    [[SFRuiJieAccountManager sharedManager] switchAccountStatusToResumeOrSuspend:@"suspend"];
+}
+
+- (void)submitVerificationCode
+{
     _userInputedVerificationCode = [[NSString alloc]init];
     _userInputedVerificationCode = _verificationCodeTextFieldView.text;
     [SFRuiJieAccountManager sharedManager].verificationCode = _userInputedVerificationCode;
-    [[SFRuiJieAccountManager sharedManager] switchAccountStatusToResumeOrSuspend:@"resume"];
+}
+
+- (void)showSuccessAlertView
+{
+    UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"连接成功" message:@"已经完成了锐捷的操作" delegate:nil cancelButtonTitle:@"好的呢！" otherButtonTitles: nil];
+    [[NSOperationQueue mainQueue]addOperationWithBlock:^{
+        [alertView show];
+    }];
 }
 
 
