@@ -33,15 +33,20 @@
     NSData *data = [params dataUsingEncoding:NSUnicodeStringEncoding];
     [urlRequest setHTTPBody:data];
     [urlRequest setHTTPMethod:@"POST"];
-    [urlRequest setHTTPBody:[params dataUsingEncoding:NSUTF8StringEncoding]];
+    [urlRequest setHTTPBody:[params dataUsingEncoding:NSISOLatin1StringEncoding]];
     [urlRequest setHTTPShouldHandleCookies:YES];
     
     NSURLSessionDataTask * dataTask = [defaultSession dataTaskWithRequest:urlRequest completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
     {
         if(error == nil)
         {
-            NSLog(@"成功登陆");
+//            NSLog(@"成功登陆");
+            NSString * completionString= [[NSString alloc]initWithData:data encoding:NSISOLatin1StringEncoding];
             
+            if ([completionString rangeOfString:@"success"].location != NSNotFound)
+            {
+                NSLog(@"检测到成功信息");
+            }
             //            [self checkUserAccountStatus];
         }
         else

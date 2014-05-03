@@ -24,6 +24,7 @@
 		DF4E7BE8190E427C009C6129 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF4E7BC7190E427C009C6129 /* UIKit.framework */; };
 		DF4E7BF0190E427C009C6129 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = DF4E7BEE190E427C009C6129 /* InfoPlist.strings */; };
 		DF4E7BF2190E427C009C6129 /* Start_StopSchoolNetworkAccountTests.m in Sources */ = {isa = PBXBuildFile; fileRef = DF4E7BF1190E427C009C6129 /* Start_StopSchoolNetworkAccountTests.m */; };
+		DF697B8C1914A877008455AE /* SFDigitalChinaViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DF697B8B1914A877008455AE /* SFDigitalChinaViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -61,6 +62,8 @@
 		DF4E7BED190E427C009C6129 /* Start&StopSchoolNetworkAccountTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Start&StopSchoolNetworkAccountTests-Info.plist"; sourceTree = "<group>"; };
 		DF4E7BEF190E427C009C6129 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		DF4E7BF1190E427C009C6129 /* Start_StopSchoolNetworkAccountTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Start_StopSchoolNetworkAccountTests.m; sourceTree = "<group>"; };
+		DF697B8A1914A877008455AE /* SFDigitalChinaViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SFDigitalChinaViewController.h; sourceTree = "<group>"; };
+		DF697B8B1914A877008455AE /* SFDigitalChinaViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SFDigitalChinaViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -128,6 +131,8 @@
 				DF4E7BDC190E427C009C6129 /* SFViewController.m */,
 				DF2222331911D2CC00695D99 /* SFRuiJieAccountManager.h */,
 				DF2222341911D2CC00695D99 /* SFRuiJieAccountManager.m */,
+				DF697B8A1914A877008455AE /* SFDigitalChinaViewController.h */,
+				DF697B8B1914A877008455AE /* SFDigitalChinaViewController.m */,
 				DF1515B019140001001B1A2D /* SFDigitalChinaAccountManager.h */,
 				DF1515B119140001001B1A2D /* SFDigitalChinaAccountManager.m */,
 				DF4E7BDE190E427C009C6129 /* Images.xcassets */,
@@ -266,6 +271,7 @@
 			files = (
 				DF1515B219140001001B1A2D /* SFDigitalChinaAccountManager.m in Sources */,
 				DF4E7BD0190E427C009C6129 /* main.m in Sources */,
+				DF697B8C1914A877008455AE /* SFDigitalChinaViewController.m in Sources */,
 				DF4E7BDD190E427C009C6129 /* SFViewController.m in Sources */,
 				DF4E7BD4190E427C009C6129 /* SFAppDelegate.m in Sources */,
 				DF2222351911D2CC00695D99 /* SFRuiJieAccountManager.m in Sources */,

@@ -89,7 +89,7 @@
     NSData *data = [params dataUsingEncoding:NSUnicodeStringEncoding];
     [urlRequest setHTTPBody:data];
     [urlRequest setHTTPMethod:@"POST"];
-    [urlRequest setHTTPBody:[params dataUsingEncoding:NSUTF8StringEncoding]];
+    [urlRequest setHTTPBody:[params dataUsingEncoding:NSASCIIStringEncoding]];
     [urlRequest setHTTPShouldHandleCookies:YES];
     
     NSURLSessionDataTask * dataTask = [defaultSession dataTaskWithRequest:urlRequest completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
@@ -140,7 +140,7 @@
         if(error == nil)
         {
             NSLog(@"已接收到Input值");
-            NSString *startAccountContentRecirvedString = [[NSString alloc]initWithData:data encoding:kCFStringEncodingUTF8];
+            NSString *startAccountContentRecirvedString = [[NSString alloc]initWithData:data encoding:NSASCIIStringEncoding];
             NSString *patternOfOperationVerificationCode = @"(?<=type=\"hidden\" name=\"UserOperationForm:operationVerifyCode\" value=\").*(?=\" />)";
             NSString *patternOfsubmitCodeId = @"(?<=name=\"submitCodeId\" value=\").*(?=\" />)";
             NSString *patternOfcom_sun_faces_VIEW = @"(?<=id=\"com.sun.faces.VIEW\" value=\").*(?=\" /><input)";
@@ -193,12 +193,12 @@
     NSData *data = [params dataUsingEncoding:NSUnicodeStringEncoding];
     [urlRequest setHTTPBody:data];
     [urlRequest setHTTPMethod:@"POST"];
-    [urlRequest setHTTPBody:[params dataUsingEncoding:NSUTF8StringEncoding]];
+    [urlRequest setHTTPBody:[params dataUsingEncoding:NSASCIIStringEncoding]];
     [urlRequest setHTTPShouldHandleCookies:YES];
     
     NSURLSessionDataTask * dataTask = [defaultSession dataTaskWithRequest:urlRequest completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
     {
-        NSString * completionString= [[NSString alloc]initWithData:data encoding:kCFStringEncodingUTF8];
+        NSString * completionString= [[NSString alloc]initWithData:data encoding:NSASCIIStringEncoding];
         
         if ([completionString rangeOfString:@"alert"].location != NSNotFound)
         {

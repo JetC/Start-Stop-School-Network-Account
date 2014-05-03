@@ -15,7 +15,9 @@
 @interface SFViewController ()<SFRuiJieDelegate>
 @property (strong, nonatomic) IBOutlet UIImageView *verificationCodeImageView;
 @property (weak, nonatomic) IBOutlet UITextField *verificationCodeTextFieldView;
-@property (weak, nonatomic) IBOutlet UIButton *startLoginButton;
+@property (weak, nonatomic) IBOutlet UIButton *resumeAccountButton;
+@property (weak, nonatomic) IBOutlet UIButton *suspendAccountButton;
+
 @property (strong, nonatomic) NSString *userInputedVerificationCode;
 
 @end
@@ -50,7 +52,14 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (IBAction)startLogin:(id)sender
+- (IBAction)resumeAccount:(id)sender
+{
+    [self submitVerificationCode];
+    
+    [[SFRuiJieAccountManager sharedManager] switchAccountStatusToResumeOrSuspend:@"resume"];
+}
+
+- (IBAction)suspendAccount:(id)sender
 {
     [self submitVerificationCode];
     
