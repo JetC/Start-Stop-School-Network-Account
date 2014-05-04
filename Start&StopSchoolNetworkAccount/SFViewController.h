@@ -7,8 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "SFRuiJieAccountManager.h"
 
-@interface SFViewController : UIViewController<UITextFieldDelegate>
+@interface SFViewController : UIViewController<UITextFieldDelegate,SFRuiJieDelegate>
 
+-(void)showVerificationCodeImage:(UIImage *)verificationCodeImage;
 
 @end

@@ -7,12 +7,12 @@
 //
 
 #import "SFViewController.h"
-#import "SFRuiJieAccountManager.h"
 // !!!:怎么判断校园网状况
-//TODO: hhh
+//TODO:mm
+//FIXME:mm
 //???:ooo
 
-@interface SFViewController ()<SFRuiJieDelegate>
+@interface SFViewController ()
 @property (strong, nonatomic) IBOutlet UIImageView *verificationCodeImageView;
 @property (weak, nonatomic) IBOutlet UITextField *verificationCodeTextFieldView;
 @property (weak, nonatomic) IBOutlet UIButton *resumeAccountButton;
@@ -35,14 +35,14 @@
     
 }
 
--(void)showVerificationCodeImage
+-(void)showVerificationCodeImage:(UIImage *)verificationCodeImage
 {
     if (_verificationCodeImageView == nil)
     {
         _verificationCodeImageView = [[UIImageView alloc]init];
     }
 
-    _verificationCodeImageView.image = [SFRuiJieAccountManager sharedManager].verificationCodeImage;
+    _verificationCodeImageView.image = verificationCodeImage;
 }
 
 
@@ -64,6 +64,10 @@
     [self submitVerificationCode];
     
     [[SFRuiJieAccountManager sharedManager] switchAccountStatusToResumeOrSuspend:@"suspend"];
+}
+- (IBAction)checkAccountStatus:(id)sender
+{
+	[[SFRuiJieAccountManager sharedManager] checkUserAccountStatus];
 }
 
 /**

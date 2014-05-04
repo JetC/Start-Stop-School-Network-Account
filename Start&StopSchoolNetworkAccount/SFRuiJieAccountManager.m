@@ -9,7 +9,7 @@
 #import "SFRuiJieAccountManager.h"
 #import "SFViewController.h"
 
-@interface SFRuiJieAccountManager()<NSURLSessionDelegate>
+@interface SFRuiJieAccountManager()
 /**
  *  标识是resume还是suspend操作，所有网络操作函数依赖于此（除了loadVerificationCodeImage）
  */
@@ -47,13 +47,10 @@
     {
         if(error == nil)
         {
-            if (_verificationCodeImage == nil)
-            {
-                _verificationCodeImage = [[UIImage alloc]init];
-            }
-            _verificationCodeImage = [UIImage imageWithData:data];
+            UIImage *verificationCodeImage = [[UIImage alloc]initWithData:data];
+            
             NSLog(@"Load Verification Code Image Successfully!");
-            [_ruijieDelegate showVerificationCodeImage];
+            [_ruijieDelegate showVerificationCodeImage:verificationCodeImage];
         }
         else
         {
@@ -99,7 +96,8 @@
             NSLog(@"成功登陆");
             
 //            [self checkUserAccountStatus];
-            [self fetchAuthorizationInfo];
+			[self checkUserAccountStatus];
+	//            [self fetchAuthorizationInfo];
         }
         else
         {
@@ -199,18 +197,23 @@
     NSURLSessionDataTask * dataTask = [defaultSession dataTaskWithRequest:urlRequest completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
     {
         NSString * completionString= [[NSString alloc]initWithData:data encoding:NSASCIIStringEncoding];
-        
+        NSLog(@"%@",completionString);
         if ([completionString rangeOfString:@"alert"].location != NSNotFound)
         {
             NSLog(@"成功%@",operationChineseNameString);
-//            NSLog(@"%@",completionString);
-//            NSLog(@"%d",[completionString rangeOfString:@"alert"].location);
             [_ruijieDelegate showSuccessAlertView];
         }
         else
         {
             NSLog(@"%@失败请重试",operationChineseNameString);
         }
+        
+        
+//        if () {
+//            
+//        } else {
+//            
+//        }
     }];
     [dataTask resume];
     NSLog(@"POST Over!");
@@ -259,7 +262,7 @@
  */
 - (void)checkUserAccountStatus
 {
-    NSURL *url = [NSURL URLWithString:@"https://whu-sb.whu.edu.cn:8443/selfservice/"];
+    NSURL *url = [NSURL URLWithString:@"https://whu-sb.whu.edu.cn:8443/selfservice/module/userself/web/self_suspend.jsf"];
     NSURLSessionConfiguration *defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
     
     NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration: defaultConfigObject delegate: self delegateQueue: [NSOperationQueue mainQueue]];
@@ -268,11 +271,18 @@
     [urlRequest setHTTPShouldHandleCookies:YES];
     
     NSURLSessionDataTask * dataTask = [defaultSession dataTaskWithRequest:urlRequest completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
-                                       {
-                                           NSLog(@"Opened Page");
-                                       }];
+	{
+		NSLog(@"Opened Page");
+		NSString * completionString= [[NSString alloc]initWithData:data encoding:NSASCIIStringEncoding];
+        NSLog(@"%@",completionString);
+		NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:[NSString stringWithFormat:@"<span id=\"UserOperationForm:stateFlag\">&#27491;&#24120;</span>"] options:0 error:nil];
+//		NSLog(@"<span id=\"UserOperationForm:stateFlag\">&#26242;&#20572;</span>");
+		NSUInteger numberOfMatches = [regex numberOfMatchesInString:completionString options:0 range:NSMakeRange(0, [completionString length])];
+		NSLog(@"Found %i",numberOfMatches);
+	}];
     
     [dataTask resume];
 }
+
 
 @end

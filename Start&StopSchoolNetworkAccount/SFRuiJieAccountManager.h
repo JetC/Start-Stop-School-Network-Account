@@ -9,14 +9,13 @@
 #import <Foundation/Foundation.h>
 @protocol SFRuiJieDelegate
 
-- (void)showVerificationCodeImage;
+- (void)showVerificationCodeImage:(UIImage *)verificationCodeImage;
 - (void)showSuccessAlertView;
 
 @end
 
-@interface SFRuiJieAccountManager : NSObject
-/**存放验证码图片*/
-@property (strong, nonatomic) UIImage *verificationCodeImage;
+@interface SFRuiJieAccountManager : NSObject<NSURLSessionDelegate>
+
 /**存放用户校园网账号 */
 @property (strong, nonatomic) NSString *userAccountIDForSchoolNetwork;
 /**存放用户校园网密码*/
@@ -29,8 +28,18 @@
 + (instancetype)sharedManager;
 - (void)loadVerificationCodeImage;
 - (void)switchAccountStatusToResumeOrSuspend:(NSString *)resumeOrSuspend;
+- (void)checkUserAccountStatus;
 
 
-
+/*
+ 已经是暂停状态时返回页面会显示：
+ <span id="UserOperationForm:stateFlag">暂停</span>
+ <span id="UserOperationForm:stateFlag">&#26242;&#20572;</span>
+ 
+ 
+ 已经是正常状态时返回页面会显示：
+ <span id="UserOperationForm:stateFlag">正常</span>
+ <span id="UserOperationForm:stateFlag">&#27491;&#24120;</span>
+ */
 
 @end

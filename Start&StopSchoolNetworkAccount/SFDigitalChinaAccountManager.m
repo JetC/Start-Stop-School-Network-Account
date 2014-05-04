@@ -29,7 +29,7 @@
     NSURLSessionConfiguration *defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
     NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration: defaultConfigObject delegate: self delegateQueue: nil];
     NSMutableURLRequest * urlRequest = [NSMutableURLRequest requestWithURL:url];
-    NSString *params = [NSString stringWithFormat:@"table=101&userName=2012302630057&allowPreday=%d&submit=submit",isSuspend];
+    NSString *params = [NSString stringWithFormat:@"table=101&userName=2012301130125&allowPreday=%d&submit=submit",isSuspend];
     NSData *data = [params dataUsingEncoding:NSUnicodeStringEncoding];
     [urlRequest setHTTPBody:data];
     [urlRequest setHTTPMethod:@"POST"];
@@ -46,6 +46,10 @@
             if ([completionString rangeOfString:@"success"].location != NSNotFound)
             {
                 NSLog(@"检测到成功信息");
+            }
+            else if ([completionString rangeOfString:@"error"].location != NSNotFound)
+            {
+                NSLog(@"启停操作失败！");
             }
             //            [self checkUserAccountStatus];
         }
