@@ -11,6 +11,7 @@
 
 @interface SFRuiJieAccountManager()
 
+@property (strong, nonatomic) NSString *userAccountState;
 /**存放用户校园网账号 */
 @property (strong, nonatomic) NSString *userAccountIDForSchoolNetwork;
 /**存放用户校园网密码*/
@@ -21,10 +22,7 @@
  *  标识是resume还是suspend操作，所有网络操作函数依赖于此（除了loadVerificationCodeImage）
  */
 @property (strong, nonatomic) NSString *resumeOrSuspend;
-/**
- *  通过CheckStatus判断得到的用户账户状态，分为Normal和Suspended两种
- */
-@property (strong, nonatomic) NSString *userAccountState;
+
 //以下3个是用于登录后的验证信息获取（最后那个应该是没必要的，不过谨慎起见保留）
 @property (strong, nonatomic) NSString *operationVerifyCode;
 @property (strong, nonatomic) NSString *comSunFacesVIEW;
@@ -77,19 +75,19 @@
  *
  *  @param resumeOrSuspend 区分启、停操作，仅允许输入NSString类型的resume或suspend（不区分大小写）。
  */
-- (void)switchAccountStatusToResumeOrSuspend:(NSString *)resumeOrSuspend usingAccountID:(NSString *)accountID password:(NSString *)password andVerificationCode:(NSString *)verificationCode
+- (void)switchAccountStatusToResumeOrSuspend:(NSString *)resumeOrSuspend
 {
     _resumeOrSuspend = [resumeOrSuspend lowercaseString];
-    _userAccountIDForSchoolNetwork = accountID;
-    _userAccountPasswordForSchoolNetwork = password;
-    _verificationCode = verificationCode;
-    [self loginAccountManagingSystem];
+    [_ruijieDelegate configLabelForWaiting];
+    [self loginAccountManagingSystem:YES];
 }
 
 /**
- * 第一步：触发login锐捷系统操作，等到回调成功后会继续触发一系列函数直至完成启或停的操作
+ *  第一步：触发login锐捷系统操作，
+ *
+ *  @param triggerAccountManagement 回调成功后，若为YES，则会继续触发一系列函数直至完成启或停的操作,若为NO，则触发检查账号状态的函数
  */
-- (void)loginAccountManagingSystem
+- (void)loginAccountManagingSystem:(BOOL)triggerAccountManagement
 {
     NSURL *url = [NSURL URLWithString:@"https://whu-sb.whu.edu.cn:8443/selfservice/module/scgroup/web/login_judge.jsf"];
     NSURLSessionConfiguration *defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
@@ -108,9 +106,14 @@
         {
             NSLog(@"成功登陆");
             
-//            [self checkUserAccountStatus];
-			[self checkUserAccountStatus];
-	//            [self fetchAuthorizationInfo];
+            if (triggerAccountManagement == YES)
+            {
+                [self fetchAuthorizationInfo];
+            }
+            else
+            {
+                [self startCheckStatus];
+            }
         }
         else
         {
@@ -214,6 +217,7 @@
         if ([completionString rangeOfString:@"alert"].location != NSNotFound)
         {
             NSLog(@"成功%@",operationChineseNameString);
+            [self checkUserAccountStatus];
             [_ruijieDelegate showSuccessAlertView];
         }
         else
@@ -221,12 +225,6 @@
             NSLog(@"%@失败请重试",operationChineseNameString);
         }
         
-        
-//        if () {
-//            
-//        } else {
-//            
-//        }
     }];
     [dataTask resume];
     NSLog(@"POST Over!");
@@ -271,9 +269,15 @@
 }
 
 /**
- *  检查用户账户0状态
+ *  检查用户账户状态
  */
 - (void)checkUserAccountStatus
+{
+    [self loginAccountManagingSystem:NO];
+    [_ruijieDelegate configLabelForWaiting];
+}
+
+- (void)startCheckStatus
 {
     NSURL *url = [NSURL URLWithString:@"https://whu-sb.whu.edu.cn:8443/selfservice/module/userself/web/self_suspend.jsf"];
     NSURLSessionConfiguration *defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
@@ -284,33 +288,45 @@
     [urlRequest setHTTPShouldHandleCookies:YES];
     
     NSURLSessionDataTask * dataTask = [defaultSession dataTaskWithRequest:urlRequest completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
-	{
-		NSLog(@"Opened Page");
-		NSString * completionString= [[NSString alloc]initWithData:data encoding:NSASCIIStringEncoding];
+    {
+        NSLog(@"Opened Page");
+        NSString *completionString= [[NSString alloc]initWithData:data encoding:NSASCIIStringEncoding];
         NSLog(@"%@",completionString);
-		NSRegularExpression *normalStateIndicatorString = [NSRegularExpression regularExpressionWithPattern:[NSString stringWithFormat:@"<span id=\"UserOperationForm:stateFlag\">&#27491;&#24120;</span>"] options:0 error:nil];
+        NSRegularExpression *normalStateIndicatorString = [NSRegularExpression regularExpressionWithPattern:[NSString stringWithFormat:@"<span id=\"UserOperationForm:stateFlag\">&#27491;&#24120;</span>"] options:0 error:nil];
         NSRegularExpression *suspendingStateIndicatorString = [NSRegularExpression regularExpressionWithPattern:[NSString stringWithFormat:@"<span id=\"UserOperationForm:stateFlag\">&#26242;&#20572;</span>"] options:0 error:nil];
         
-		NSInteger numberOfMatchesOfNormalStateString = [normalStateIndicatorString numberOfMatchesInString:completionString options:0 range:NSMakeRange(0, [completionString length])];
+        NSInteger numberOfMatchesOfNormalStateString = [normalStateIndicatorString numberOfMatchesInString:completionString options:0 range:NSMakeRange(0, [completionString length])];
         NSInteger numberOfMatchesOfSuspendingStateString = [suspendingStateIndicatorString numberOfMatchesInString:completionString options:0 range:NSMakeRange(0, [completionString length])];
         
-		NSLog(@"Normal Found %ld, Suspend Found %ld",numberOfMatchesOfNormalStateString,numberOfMatchesOfSuspendingStateString);
+        NSLog(@"Normal Found %ld, Suspend Found %ld",(long)numberOfMatchesOfNormalStateString,(long)numberOfMatchesOfSuspendingStateString);
         if (numberOfMatchesOfNormalStateString > 0 && numberOfMatchesOfSuspendingStateString == 0)
         {
-            _userAccountState = @"Normal";
+            _userAccountState = @"normal";
+            [_ruijieDelegate showUserAccountStatus:@"normal"];
+            
         }
         else if (numberOfMatchesOfNormalStateString == 0 && numberOfMatchesOfSuspendingStateString > 0)
         {
-            _userAccountState = @"Suspended";
+            _userAccountState = @"suspended";
+            [_ruijieDelegate showUserAccountStatus:@"suspended"];
+            
         }
         else
         {
             NSLog(@"ERROR Checking Account State");
         }
         
-	}];
+    }];
     
     [dataTask resume];
+
+}
+
+- (void)setupUserAccountID:(NSString *)userAccountID andPassword:(NSString *)password VerificationCode:(NSString *)verificationCode
+{
+    _userAccountIDForSchoolNetwork = userAccountID;
+    _userAccountPasswordForSchoolNetwork = password;
+    _verificationCode = verificationCode;
 }
 
 

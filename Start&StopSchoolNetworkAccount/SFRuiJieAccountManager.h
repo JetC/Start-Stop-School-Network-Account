@@ -11,22 +11,27 @@
 
 - (void)showVerificationCodeImage:(UIImage *)verificationCodeImage;
 - (void)showSuccessAlertView;
+- (void)showUserAccountStatus:(NSString *)userAccountStatus;
+- (void)configLabelForWaiting;
 
-//TODO:写loginUsingAccountPassword
-//		失败回调，参考Wifi
 
 @end
 
+//TODO:失败回调，参考Wifi
 @interface SFRuiJieAccountManager : NSObject<NSURLSessionDelegate>
 
-
-
+/**
+ *  通过CheckStatus判断得到的用户账户状态，分为Normal和Suspended两种
+ */
 @property (strong, nonatomic) id <SFRuiJieDelegate>ruijieDelegate;
+
 
 + (instancetype)sharedManager;
 - (void)loadVerificationCodeImage;
-- (void)switchAccountStatusToResumeOrSuspend:(NSString *)resumeOrSuspend usingAccountID:(NSString *)accountID password:(NSString *)password andVerificationCode:(NSString *)verificationCode;
+- (void)setupUserAccountID:(NSString *)userAccountID andPassword:(NSString *)password VerificationCode:(NSString *)verificationCode;
+- (void)switchAccountStatusToResumeOrSuspend:(NSString *)resumeOrSuspend;
 - (void)checkUserAccountStatus;
+
 
 
 /*
