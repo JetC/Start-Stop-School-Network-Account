@@ -10,11 +10,21 @@
 #import "SFViewController.h"
 
 @interface SFRuiJieAccountManager()
+
+/**存放用户校园网账号 */
+@property (strong, nonatomic) NSString *userAccountIDForSchoolNetwork;
+/**存放用户校园网密码*/
+@property (strong, nonatomic) NSString *userAccountPasswordForSchoolNetwork;
+/**存放ViewController中返回的由用户输入的验证码*/
+@property (strong, nonatomic) NSString *verificationCode;
 /**
  *  标识是resume还是suspend操作，所有网络操作函数依赖于此（除了loadVerificationCodeImage）
  */
 @property (strong, nonatomic) NSString *resumeOrSuspend;
-
+/**
+ *  通过CheckStatus判断得到的用户账户状态，分为Normal和Suspended两种
+ */
+@property (strong, nonatomic) NSString *userAccountState;
 //以下3个是用于登录后的验证信息获取（最后那个应该是没必要的，不过谨慎起见保留）
 @property (strong, nonatomic) NSString *operationVerifyCode;
 @property (strong, nonatomic) NSString *comSunFacesVIEW;
@@ -67,9 +77,12 @@
  *
  *  @param resumeOrSuspend 区分启、停操作，仅允许输入NSString类型的resume或suspend（不区分大小写）。
  */
-- (void)switchAccountStatusToResumeOrSuspend:(NSString *)resumeOrSuspend
+- (void)switchAccountStatusToResumeOrSuspend:(NSString *)resumeOrSuspend usingAccountID:(NSString *)accountID password:(NSString *)password andVerificationCode:(NSString *)verificationCode
 {
     _resumeOrSuspend = [resumeOrSuspend lowercaseString];
+    _userAccountIDForSchoolNetwork = accountID;
+    _userAccountPasswordForSchoolNetwork = password;
+    _verificationCode = verificationCode;
     [self loginAccountManagingSystem];
 }
 
@@ -258,7 +271,7 @@
 }
 
 /**
- *  预备用此方法检查是否已经登录，尚未决定使用
+ *  检查用户账户0状态
  */
 - (void)checkUserAccountStatus
 {
@@ -275,10 +288,26 @@
 		NSLog(@"Opened Page");
 		NSString * completionString= [[NSString alloc]initWithData:data encoding:NSASCIIStringEncoding];
         NSLog(@"%@",completionString);
-		NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:[NSString stringWithFormat:@"<span id=\"UserOperationForm:stateFlag\">&#27491;&#24120;</span>"] options:0 error:nil];
-//		NSLog(@"<span id=\"UserOperationForm:stateFlag\">&#26242;&#20572;</span>");
-		NSUInteger numberOfMatches = [regex numberOfMatchesInString:completionString options:0 range:NSMakeRange(0, [completionString length])];
-		NSLog(@"Found %i",numberOfMatches);
+		NSRegularExpression *normalStateIndicatorString = [NSRegularExpression regularExpressionWithPattern:[NSString stringWithFormat:@"<span id=\"UserOperationForm:stateFlag\">&#27491;&#24120;</span>"] options:0 error:nil];
+        NSRegularExpression *suspendingStateIndicatorString = [NSRegularExpression regularExpressionWithPattern:[NSString stringWithFormat:@"<span id=\"UserOperationForm:stateFlag\">&#26242;&#20572;</span>"] options:0 error:nil];
+        
+		NSInteger numberOfMatchesOfNormalStateString = [normalStateIndicatorString numberOfMatchesInString:completionString options:0 range:NSMakeRange(0, [completionString length])];
+        NSInteger numberOfMatchesOfSuspendingStateString = [suspendingStateIndicatorString numberOfMatchesInString:completionString options:0 range:NSMakeRange(0, [completionString length])];
+        
+		NSLog(@"Normal Found %ld, Suspend Found %ld",numberOfMatchesOfNormalStateString,numberOfMatchesOfSuspendingStateString);
+        if (numberOfMatchesOfNormalStateString > 0 && numberOfMatchesOfSuspendingStateString == 0)
+        {
+            _userAccountState = @"Normal";
+        }
+        else if (numberOfMatchesOfNormalStateString == 0 && numberOfMatchesOfSuspendingStateString > 0)
+        {
+            _userAccountState = @"Suspended";
+        }
+        else
+        {
+            NSLog(@"ERROR Checking Account State");
+        }
+        
 	}];
     
     [dataTask resume];

@@ -12,22 +12,20 @@
 - (void)showVerificationCodeImage:(UIImage *)verificationCodeImage;
 - (void)showSuccessAlertView;
 
+//TODO:写loginUsingAccountPassword
+//		失败回调，参考Wifi
+
 @end
 
 @interface SFRuiJieAccountManager : NSObject<NSURLSessionDelegate>
 
-/**存放用户校园网账号 */
-@property (strong, nonatomic) NSString *userAccountIDForSchoolNetwork;
-/**存放用户校园网密码*/
-@property (strong, nonatomic) NSString *userAccountPasswordForSchoolNetwork;
-/**存放ViewController中返回的由用户输入的验证码*/
-@property (strong, nonatomic) NSString *verificationCode;
+
 
 @property (strong, nonatomic) id <SFRuiJieDelegate>ruijieDelegate;
 
 + (instancetype)sharedManager;
 - (void)loadVerificationCodeImage;
-- (void)switchAccountStatusToResumeOrSuspend:(NSString *)resumeOrSuspend;
+- (void)switchAccountStatusToResumeOrSuspend:(NSString *)resumeOrSuspend usingAccountID:(NSString *)accountID password:(NSString *)password andVerificationCode:(NSString *)verificationCode;
 - (void)checkUserAccountStatus;
 
 

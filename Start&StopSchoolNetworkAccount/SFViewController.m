@@ -28,8 +28,7 @@
 {
     [super viewDidLoad];
     
-    [SFRuiJieAccountManager sharedManager].userAccountIDForSchoolNetwork = @"2012301130125";
-    [SFRuiJieAccountManager sharedManager].userAccountPasswordForSchoolNetwork = @"204765";
+    
     [[SFRuiJieAccountManager sharedManager]  loadVerificationCodeImage];
     [SFRuiJieAccountManager sharedManager].ruijieDelegate = self;
     
@@ -56,14 +55,14 @@
 {
     [self submitVerificationCode];
     
-    [[SFRuiJieAccountManager sharedManager] switchAccountStatusToResumeOrSuspend:@"resume"];
+    [[SFRuiJieAccountManager sharedManager] switchAccountStatusToResumeOrSuspend:@"resume" usingAccountID:@"2012301130125" password:@"204765" andVerificationCode:_userInputedVerificationCode];
 }
 
 - (IBAction)suspendAccount:(id)sender
 {
     [self submitVerificationCode];
     
-    [[SFRuiJieAccountManager sharedManager] switchAccountStatusToResumeOrSuspend:@"suspend"];
+    [[SFRuiJieAccountManager sharedManager] switchAccountStatusToResumeOrSuspend:@"suspend" usingAccountID:@"2012301130125" password:@"204765" andVerificationCode:_userInputedVerificationCode];
 }
 - (IBAction)checkAccountStatus:(id)sender
 {
@@ -75,9 +74,7 @@
  */
 - (void)submitVerificationCode
 {
-    _userInputedVerificationCode = [[NSString alloc]init];
     _userInputedVerificationCode = _verificationCodeTextFieldView.text;
-    [SFRuiJieAccountManager sharedManager].verificationCode = _userInputedVerificationCode;
 }
 
 - (void)showSuccessAlertView
