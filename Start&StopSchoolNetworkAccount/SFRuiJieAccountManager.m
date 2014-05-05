@@ -21,7 +21,7 @@
 /**
  *  标识是resume还是suspend操作，所有网络操作函数依赖于此（除了loadVerificationCodeImage）
  */
-@property (strong, nonatomic) NSString *resumeOrSuspend;
+//@property (strong, nonatomic) NSString *resumeOrSuspend;
 
 //以下3个是用于登录后的验证信息获取（最后那个应该是没必要的，不过谨慎起见保留）
 @property (strong, nonatomic) NSString *operationVerifyCode;
@@ -56,7 +56,6 @@
         if(error == nil)
         {
             UIImage *verificationCodeImage = [[UIImage alloc]initWithData:data];
-            
             NSLog(@"Load Verification Code Image Successfully!");
             [_ruijieDelegate showVerificationCodeImage:verificationCodeImage];
         }
@@ -75,11 +74,10 @@
  *
  *  @param resumeOrSuspend 区分启、停操作，仅允许输入NSString类型的resume或suspend（不区分大小写）。
  */
-- (void)switchAccountStatusToResumeOrSuspend:(NSString *)resumeOrSuspend
+- (void)switchAccountStatusToResumeOrSuspend:(SFRuijieOperationWillBeDoneAfterLogin)ruijieOperationWillBeDoneAfterLogin
 {
-    _resumeOrSuspend = [resumeOrSuspend lowercaseString];
     [_ruijieDelegate configLabelForWaiting];
-    [self loginAccountManagingSystem:YES];
+    [self loginAccountManagingSystemTo:ruijieOperationWillBeDoneAfterLogin];
 }
 
 /**
@@ -87,15 +85,15 @@
  *
  *  @param triggerAccountManagement 回调成功后，若为YES，则会继续触发一系列函数直至完成启或停的操作,若为NO，则触发检查账号状态的函数
  */
-- (void)loginAccountManagingSystem:(BOOL)triggerAccountManagement
+- (void)loginAccountManagingSystemTo:(SFRuijieOperationWillBeDoneAfterLogin)ruijieOperationWillBeDoneAfterLogin
 {
     NSURL *url = [NSURL URLWithString:@"https://whu-sb.whu.edu.cn:8443/selfservice/module/scgroup/web/login_judge.jsf"];
     NSURLSessionConfiguration *defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
     NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration: defaultConfigObject delegate: self delegateQueue: nil];
     NSMutableURLRequest * urlRequest = [NSMutableURLRequest requestWithURL:url];
     NSString *params = [NSString stringWithFormat:@"act=add&name=%@&password=%@&verify=%@",_userAccountIDForSchoolNetwork,_userAccountPasswordForSchoolNetwork,_verificationCode];
-    NSData *data = [params dataUsingEncoding:NSUnicodeStringEncoding];
-    [urlRequest setHTTPBody:data];
+//    NSData *data = [params dataUsingEncoding:NSUnicodeStringEncoding];
+//    [urlRequest setHTTPBody:data];
     [urlRequest setHTTPMethod:@"POST"];
     [urlRequest setHTTPBody:[params dataUsingEncoding:NSASCIIStringEncoding]];
     [urlRequest setHTTPShouldHandleCookies:YES];
@@ -104,20 +102,34 @@
     {
         if(error == nil)
         {
-            NSLog(@"成功登陆");
-            
-            if (triggerAccountManagement == YES)
+            NSLog(@"%@",[[NSString alloc]initWithData:data encoding:NSASCIIStringEncoding]);
+            if (data.length > 10000)
             {
-                [self fetchAuthorizationInfo];
+                NSLog(@"成功登陆");
+                switch (ruijieOperationWillBeDoneAfterLogin)
+                {
+                    case SFRuijieResumeAccount:
+                        [self fetchAuthorizationInfoFor:SFRuijieResumeAccount];
+                        break;
+                    case SFRuijieSuspendAccount:
+                        [self fetchAuthorizationInfoFor:SFRuijieSuspendAccount];
+                        break;
+                    case SFRuijieCheckAccountAvailability:
+                        [self startCheckStatus];
+                        break;
+                    default:
+                        break;
+                }
+
             }
             else
             {
-                [self startCheckStatus];
+                NSLog(@"Login Failed");
             }
         }
         else
         {
-            NSLog(@"Error: %@", error);
+            NSLog(@"NetWork Error: %@", error);
         }
     }];
     
@@ -127,20 +139,20 @@
 /**
  *  第二步：在登录锐捷后返回的页面内调用正则表达式搜索进行启停操作时需要的字段
  */
-- (void)fetchAuthorizationInfo
+- (void)fetchAuthorizationInfoFor:(SFRuijieOperationWillBeDoneAfterLogin)operationWillBeDone
 {
     NSString *urlString;
-    if ([_resumeOrSuspend isEqual:@"resume"])
+    if (operationWillBeDone == SFRuijieResumeAccount)
     {
         urlString = @"https://whu-sb.whu.edu.cn:8443/selfservice/module/userself/web/self_resume.jsf";
     }
-    else if ([_resumeOrSuspend isEqual:@"suspend"])
+    else if (operationWillBeDone == SFRuijieSuspendAccount)
     {
         urlString = @"https://whu-sb.whu.edu.cn:8443/selfservice/module/userself/web/self_suspend.jsf";
     }
     else
     {
-        NSLog(@"Resume||Suspend String ERROR!");
+        NSLog(@"Resume||Suspend  ERROR!");
     }
     NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@",urlString]];
     NSURLSessionConfiguration *defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
@@ -162,7 +174,7 @@
             _submitCodeId = [self analyseStringUsingRegularExpression:startAccountContentRecirvedString usingRegularExpression:patternOfsubmitCodeId];
             _comSunFacesVIEW = [self analyseStringUsingRegularExpression:startAccountContentRecirvedString usingRegularExpression:patternOfcom_sun_faces_VIEW];
             
-            [self changeAccountStatus];
+            [self changeAccountStatusTo:operationWillBeDone];
             
         }
         else
@@ -178,32 +190,35 @@
 /**
  *  第三步：通过POST实现启或停账户
  */
-- (void)changeAccountStatus
+- (void)changeAccountStatusTo:(SFRuijieOperationWillBeDoneAfterLogin)operationWillBeDone
 {
     NSString *urlString;
     NSString *operationGB2312NameString;
     NSString *stringFromSusOrRes;
     NSString *operationChineseNameString;
-    if ([_resumeOrSuspend  isEqualToString:@"resume"])
+    NSString *resumeOrSuspend;
+    if (operationWillBeDone == SFRuijieResumeAccount)
     {
         urlString = @"https://whu-sb.whu.edu.cn:8443/selfservice/module/userself/web/self_resume.jsf";
         operationGB2312NameString = @"%C8%B7%C8%CF%BB%D6%B8%B4";
         stringFromSusOrRes = @"res";
         operationChineseNameString = @"启用";
+        resumeOrSuspend = @"resume";
     }
-    else if ([_resumeOrSuspend  isEqualToString:@"suspend"])
+    else if (operationWillBeDone == SFRuijieSuspendAccount)
     {
         urlString = @"https://whu-sb.whu.edu.cn:8443/selfservice/module/userself/web/self_suspend.jsf";
         operationGB2312NameString = @"%C8%B7%C8%CF%D4%DD%CD%A3";
         stringFromSusOrRes = @"sus";
         operationChineseNameString = @"停用";
+        resumeOrSuspend = @"suspend";
     }
     NSURL *url = [NSURL URLWithString:urlString];
     NSURLSessionConfiguration *defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
     NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration: defaultConfigObject delegate: self delegateQueue: nil];
     NSMutableURLRequest * urlRequest = [NSMutableURLRequest requestWithURL:url];
     NSString *suspendString = operationGB2312NameString;
-    NSString *params = [NSString stringWithFormat:@"act=init&op=%@&UserOperationForm:targetUserId=%@&UserOperationForm:operationVerifyCode=%@&submitCodeId=%@&UserOperationForm:verify=%@&UserOperationForm:%@=%@&com.sun.faces.VIEW=%@&UserOperationForm=UserOperationForm",_resumeOrSuspend,_userAccountIDForSchoolNetwork,_operationVerifyCode,_submitCodeId,_verificationCode,stringFromSusOrRes,suspendString,_comSunFacesVIEW];
+    NSString *params = [NSString stringWithFormat:@"act=init&op=%@&UserOperationForm:targetUserId=%@&UserOperationForm:operationVerifyCode=%@&submitCodeId=%@&UserOperationForm:verify=%@&UserOperationForm:%@=%@&com.sun.faces.VIEW=%@&UserOperationForm=UserOperationForm",resumeOrSuspend,_userAccountIDForSchoolNetwork,_operationVerifyCode,_submitCodeId,_verificationCode,stringFromSusOrRes,suspendString,_comSunFacesVIEW];
     NSData *data = [params dataUsingEncoding:NSUnicodeStringEncoding];
     [urlRequest setHTTPBody:data];
     [urlRequest setHTTPMethod:@"POST"];
@@ -273,10 +288,12 @@
  */
 - (void)checkUserAccountStatus
 {
-    [self loginAccountManagingSystem:NO];
+    [self loginAccountManagingSystemTo:SFRuijieCheckAccountAvailability];
     [_ruijieDelegate configLabelForWaiting];
 }
-
+/**
+ *  只是组件一部分，不要直接调用。使用前需要先登录锐捷，回调中调用此方法
+ */
 - (void)startCheckStatus
 {
     NSURL *url = [NSURL URLWithString:@"https://whu-sb.whu.edu.cn:8443/selfservice/module/userself/web/self_suspend.jsf"];

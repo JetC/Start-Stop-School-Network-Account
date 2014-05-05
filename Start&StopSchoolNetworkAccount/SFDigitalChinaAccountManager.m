@@ -10,16 +10,20 @@
 
 @implementation SFDigitalChinaAccountManager
 
--(void)switchAccountStatusToResumeOrSuspend:(NSString *)resumeOrSuspend
+- (void)loginAccountManagingSystemTo:(SFDigitalChinaOperationWillBeDone)digitalChinaOperationWillBeDone
 {
     NSInteger isSuspend;
-    if ([[resumeOrSuspend lowercaseString]isEqualToString:@"resume"])
+    if (digitalChinaOperationWillBeDone == SFDigitalChinaResumeAccount)
     {
         isSuspend = 0;
     }
-    else if ([[resumeOrSuspend lowercaseString]isEqualToString:@"suspend"])
+    else if (digitalChinaOperationWillBeDone == SFDigitalChinaSuspendAccount)
     {
         isSuspend = 1;
+    }
+    else if (digitalChinaOperationWillBeDone == SFDigitalChinaCheckAccountAvailability)
+    {
+        
     }
     else
     {
@@ -42,10 +46,14 @@
         {
 //            NSLog(@"成功登陆");
             NSString * completionString= [[NSString alloc]initWithData:data encoding:NSISOLatin1StringEncoding];
-            
+            NSLog(@"completionString: %@",completionString);
             if ([completionString rangeOfString:@"success"].location != NSNotFound)
             {
                 NSLog(@"检测到成功信息");
+            }
+            else if ([completionString rangeOfString:@"error : Êý¾Ý¿â³ö´í£¡"].location != NSNotFound)
+            {
+                NSLog(@"不是神码用户");
             }
             else if ([completionString rangeOfString:@"error"].location != NSNotFound)
             {

@@ -56,14 +56,14 @@
     [self submitVerificationCode];
     
     [self setupUserIDAndPasswordAndVerificationCode];
-    [[SFRuiJieAccountManager sharedManager] switchAccountStatusToResumeOrSuspend:@"resume"];
+    [[SFRuiJieAccountManager sharedManager] switchAccountStatusToResumeOrSuspend:SFRuijieResumeAccount];
 }
 
 - (IBAction)suspendAccount:(id)sender
 {
     [self submitVerificationCode];
     [self setupUserIDAndPasswordAndVerificationCode];
-    [[SFRuiJieAccountManager sharedManager] switchAccountStatusToResumeOrSuspend:@"suspend"];
+    [[SFRuiJieAccountManager sharedManager] switchAccountStatusToResumeOrSuspend:SFRuijieSuspendAccount];
 }
 - (IBAction)checkAccountStatus:(id)sender
 {

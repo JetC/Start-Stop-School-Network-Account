@@ -11,11 +11,25 @@
 @protocol SFDigitalChinaDelegate <NSObject>
 
 
-
 @end
 
 @interface SFDigitalChinaAccountManager : NSObject<NSURLSessionDelegate>
 
-- (void)switchAccountStatusToResumeOrSuspend:(NSString *)resumeOrSuspend;
+typedef NS_ENUM(uint, SFDigitalChinaOperationWillBeDone)
+{
+    /**
+     *  启用神码账号
+     */
+    SFDigitalChinaResumeAccount,
+    /**
+     *  暂停神码账号
+     */
+    SFDigitalChinaSuspendAccount,
+    /**
+     *  检查神码账号可用性(暂不可用)
+     */
+    SFDigitalChinaCheckAccountAvailability
+};
+- (void)loginAccountManagingSystemTo:(SFDigitalChinaOperationWillBeDone)digitalChinaOperationWillBeDone;
 
 @end
