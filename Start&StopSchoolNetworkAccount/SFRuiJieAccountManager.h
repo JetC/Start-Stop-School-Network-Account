@@ -13,6 +13,7 @@
 - (void)showSuccessAlertView;
 - (void)showUserAccountStatus:(NSString *)userAccountStatus;
 - (void)configLabelForWaiting;
+- (void)showAlertViewWithTitle:(NSString *)title message:(NSString *)message cancelButtonTitle:(NSString *)cancelButtonTitle;
 
 
 @end

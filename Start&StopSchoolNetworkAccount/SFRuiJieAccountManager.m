@@ -102,8 +102,9 @@
     {
         if(error == nil)
         {
-            NSLog(@"%@",[[NSString alloc]initWithData:data encoding:NSASCIIStringEncoding]);
-            if (data.length > 10000)
+            NSString *stringFromData = [[NSString alloc]initWithData:data encoding:NSASCIIStringEncoding];
+            NSLog(@"%@",stringFromData);
+            if ([stringFromData rangeOfString:@"self.location='../../../module/webcontent/web/index_self.jsf?'"].location != NSNotFound)
             {
                 NSLog(@"成功登陆");
                 switch (ruijieOperationWillBeDoneAfterLogin)
@@ -120,12 +121,12 @@
                     default:
                         break;
                 }
-
             }
             else
             {
-                NSLog(@"Login Failed");
+                NSLog(@"登录出错，检查下用户名密码验证码呀");
             }
+
         }
         else
         {
@@ -235,6 +236,16 @@
             [self checkUserAccountStatus];
             [_ruijieDelegate showSuccessAlertView];
         }
+        else if ([completionString rangeOfString:@"ÒÑ¾­´¦ÓÚÕý³£×´Ì¬,ÎÞÐèÔÙ½øÐÐ»Ö¸´!"].location != NSNotFound)
+        {
+            NSLog(@"账户已经是正常了吧？");
+            [_ruijieDelegate showAlertViewWithTitle:@"请注意账户目前状态" message:@"账户已经是正常了吧？" cancelButtonTitle:nil];
+        }
+        else if ([completionString rangeOfString:@"ÒÑ¾­´¦ÓÚÔÝÍ£×´Ì¬,ÎÞÐèÔÙ½øÐÐÔÝÍ£!"].location != NSNotFound)
+        {
+            NSLog(@"账户已经停用了吧？");
+            [_ruijieDelegate showAlertViewWithTitle:@"请注意账户目前状态" message:@"账户已经停用了吧？" cancelButtonTitle:nil];
+        }
         else
         {
             NSLog(@"%@失败请重试",operationChineseNameString);
@@ -307,32 +318,38 @@
     NSURLSessionDataTask * dataTask = [defaultSession dataTaskWithRequest:urlRequest completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
     {
         NSLog(@"Opened Page");
-        NSString *completionString= [[NSString alloc]initWithData:data encoding:NSASCIIStringEncoding];
-        NSLog(@"%@",completionString);
-        NSRegularExpression *normalStateIndicatorString = [NSRegularExpression regularExpressionWithPattern:[NSString stringWithFormat:@"<span id=\"UserOperationForm:stateFlag\">&#27491;&#24120;</span>"] options:0 error:nil];
-        NSRegularExpression *suspendingStateIndicatorString = [NSRegularExpression regularExpressionWithPattern:[NSString stringWithFormat:@"<span id=\"UserOperationForm:stateFlag\">&#26242;&#20572;</span>"] options:0 error:nil];
-        
-        NSInteger numberOfMatchesOfNormalStateString = [normalStateIndicatorString numberOfMatchesInString:completionString options:0 range:NSMakeRange(0, [completionString length])];
-        NSInteger numberOfMatchesOfSuspendingStateString = [suspendingStateIndicatorString numberOfMatchesInString:completionString options:0 range:NSMakeRange(0, [completionString length])];
-        
-        NSLog(@"Normal Found %ld, Suspend Found %ld",(long)numberOfMatchesOfNormalStateString,(long)numberOfMatchesOfSuspendingStateString);
-        if (numberOfMatchesOfNormalStateString > 0 && numberOfMatchesOfSuspendingStateString == 0)
+        if (data.length > 10000)
         {
-            _userAccountState = @"normal";
-            [_ruijieDelegate showUserAccountStatus:@"normal"];
-            
-        }
-        else if (numberOfMatchesOfNormalStateString == 0 && numberOfMatchesOfSuspendingStateString > 0)
-        {
-            _userAccountState = @"suspended";
-            [_ruijieDelegate showUserAccountStatus:@"suspended"];
-            
+            NSString *completionString= [[NSString alloc]initWithData:data encoding:NSASCIIStringEncoding];
+            NSLog(@"%@",completionString);
+            NSRegularExpression *normalStateIndicatorString = [NSRegularExpression regularExpressionWithPattern:[NSString stringWithFormat:@"<span id=\"UserOperationForm:stateFlag\">&#27491;&#24120;</span>"] options:0 error:nil];
+            NSRegularExpression *suspendingStateIndicatorString = [NSRegularExpression regularExpressionWithPattern:[NSString stringWithFormat:@"<span id=\"UserOperationForm:stateFlag\">&#26242;&#20572;</span>"] options:0 error:nil];
+            NSInteger numberOfMatchesOfNormalStateString = [normalStateIndicatorString numberOfMatchesInString:completionString options:0 range:NSMakeRange(0, [completionString length])];
+            NSInteger numberOfMatchesOfSuspendingStateString = [suspendingStateIndicatorString numberOfMatchesInString:completionString options:0 range:NSMakeRange(0, [completionString length])];
+
+            NSLog(@"Normal Found %ld, Suspend Found %ld",(long)numberOfMatchesOfNormalStateString,(long)numberOfMatchesOfSuspendingStateString);
+            if (numberOfMatchesOfNormalStateString > 0 && numberOfMatchesOfSuspendingStateString == 0)
+            {
+                _userAccountState = @"normal";
+                [_ruijieDelegate showUserAccountStatus:@"normal"];
+
+            }
+            else if (numberOfMatchesOfNormalStateString == 0 && numberOfMatchesOfSuspendingStateString > 0)
+            {
+                _userAccountState = @"suspended";
+                [_ruijieDelegate showUserAccountStatus:@"suspended"];
+
+            }
+            else
+            {
+                NSLog(@"ERROR Checking Account State,Page recieved may have Too Many Matches or NO match");
+            }
         }
         else
         {
-            NSLog(@"ERROR Checking Account State");
+            NSLog(@"Error May Occur at Login");
         }
-        
+
     }];
     
     [dataTask resume];

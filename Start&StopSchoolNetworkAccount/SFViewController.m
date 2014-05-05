@@ -100,6 +100,22 @@
     }];
 }
 
+- (void)showAlertViewWithTitle:(NSString *)title message:(NSString *)message cancelButtonTitle:(NSString *)cancelButtonTitle
+{
+    if (title == nil || [title  isEqual: @""])
+    {
+        title = @"提示";
+    }
+    if (cancelButtonTitle == nil || [cancelButtonTitle  isEqual: @""])
+    {
+        cancelButtonTitle = @"知道啦！";
+    }
+    UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:title message:message delegate:nil cancelButtonTitle:cancelButtonTitle otherButtonTitles: nil];
+    [[NSOperationQueue mainQueue]addOperationWithBlock:^{
+        [alertView show];
+    }];
+}
+
 
 - (void)showUserAccountStatus:(NSString *)userAccountStatus
 {
