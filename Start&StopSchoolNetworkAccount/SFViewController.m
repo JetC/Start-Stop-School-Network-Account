@@ -101,13 +101,6 @@
     _userAccountStatusLabel.text = @"正在加载中啦啦啦( ˘•ω•˘ )";
 }
 
-- (void)showSuccessAlertView
-{
-    UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"连接成功" message:@"已经完成了锐捷的操作" delegate:nil cancelButtonTitle:@"好的呢！" otherButtonTitles: nil];
-    [[NSOperationQueue mainQueue]addOperationWithBlock:^{
-        [alertView show];
-    }];
-}
 
 - (void)showAlertViewWithTitle:(NSString *)title message:(NSString *)message cancelButtonTitle:(NSString *)cancelButtonTitle
 {

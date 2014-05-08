@@ -18,11 +18,10 @@
 
 @protocol SFRuiJieDelegate
 
-- (void)showVerificationCodeImage:(UIImage *)verificationCodeImage;
-- (void)showSuccessAlertView;
-- (void)showUserAccountStatus:(NSString *)userAccountStatus;
-- (void)configLabelForWaiting;
-- (void)showAlertViewWithTitle:(NSString *)title message:(NSString *)message cancelButtonTitle:(NSString *)cancelButtonTitle;
+- (void)showVerificationCodeImage:(UIImage *)verificationCodeImage;//使ViewController显示验证码图片
+- (void)showUserAccountStatus:(NSString *)userAccountStatus;//显示用户账户的状态（正常还是暂停）
+- (void)configLabelForWaiting;//当等待时显示请稍后等的内容
+- (void)showAlertViewWithTitle:(NSString *)title message:(NSString *)message cancelButtonTitle:(NSString *)cancelButtonTitle;//显示AlertView
 
 
 @end
@@ -54,10 +53,24 @@ typedef NS_ENUM(uint, SFRuijieOperationWillBeDoneAfterLogin)
 
 
 + (instancetype)sharedManager;
+
+/**
+ *  获取验证码，并通过Delegate的回调使验证码显示
+ */
 - (void)loadVerificationCodeImage;
+/**
+ *  记录登录所需三个信息
+ *
+ *  @param userAccountID    校园网用户名
+ *  @param password         密码
+ *  @param verificationCode 验证码
+ */
 - (void)setupUserAccountID:(NSString *)userAccountID andPassword:(NSString *)password VerificationCode:(NSString *)verificationCode;
-- (void)loginAccountManagingSystemTo:(SFRuijieOperationWillBeDoneAfterLogin)ruijieOperationWillBeDoneAfterLogin;
-- (void)checkUserAccountStatus;
+/**
+ *  改变用户账户状态或者检查状态
+ *
+ *  @param ruijieOperationWillBeDone 决定此方法的行为
+ */
 - (void)switchAccountStatusToResumeOrSuspend:(SFRuijieOperationWillBeDoneAfterLogin)ruijieOperationWillBeDone;
 
 

@@ -18,10 +18,7 @@
 @property (strong, nonatomic) NSString *userAccountPasswordForSchoolNetwork;
 /**存放ViewController中返回的由用户输入的验证码*/
 @property (strong, nonatomic) NSString *verificationCode;
-/**
- *  标识是resume还是suspend操作，所有网络操作函数依赖于此（除了loadVerificationCodeImage）
- */
-//@property (strong, nonatomic) NSString *resumeOrSuspend;
+
 
 //以下3个是用于登录后的验证信息获取（最后那个应该是没必要的，不过谨慎起见保留）
 @property (strong, nonatomic) NSString *operationVerifyCode;
@@ -66,7 +63,7 @@
         else
         {
             NSLog(@"Error: %@", error);
-            [self showAlertViewForNetworkError:error changeForTitle:nil changeForMessage:nil];
+            [self showAlertViewForNetworkError:error changeForTitle:nil addForMessage:@"木有验证码还肿么登录~~"];
         }
     }];
     
@@ -142,7 +139,7 @@
         else
         {
             NSLog(@"NetWork Error: %@", error);
-            [self showAlertViewForNetworkError:error changeForTitle:nil changeForMessage:nil];
+            [self showAlertViewForNetworkError:error changeForTitle:nil addForMessage:nil];
         }
     }];
     
@@ -189,7 +186,7 @@
         else
         {
             NSLog(@"Error: %@", error);
-            [self showAlertViewForNetworkError:error changeForTitle:nil changeForMessage:nil];
+            [self showAlertViewForNetworkError:error changeForTitle:nil addForMessage:nil];
         }
     }];
     
@@ -246,7 +243,7 @@
             {
                 NSLog(@"成功%@",operationChineseNameString);
                 [self checkUserAccountStatus];
-                [_ruijieDelegate showSuccessAlertView];
+                [_ruijieDelegate showAlertViewWithTitle:[NSString stringWithFormat:@"成功%@",operationChineseNameString] message:[NSString stringWithFormat:@"成功%@",operationChineseNameString] cancelButtonTitle:@"好的！"];
             }
             else if ([completionString rangeOfString:@"ÒÑ¾­´¦ÓÚÕý³£×´Ì¬,ÎÞÐèÔÙ½øÐÐ»Ö¸´!"].location != NSNotFound)
             {
@@ -265,7 +262,7 @@
         }
         else
         {
-            [self showAlertViewForNetworkError:error changeForTitle:nil changeForMessage:nil];
+            [self showAlertViewForNetworkError:error changeForTitle:nil addForMessage:nil];
         }
 
     }];
@@ -339,7 +336,7 @@
         else
         {
             NSLog(@"Error May Occur at Login");
-            [self showAlertViewForNetworkError:error changeForTitle:nil changeForMessage:nil];
+            [self showAlertViewForNetworkError:error changeForTitle:nil addForMessage:nil];
         }
 
     }];
@@ -394,19 +391,25 @@
     return resultString;
 }
 
-
-- (void)showAlertViewForNetworkError:(NSError *)networkError changeForTitle:(NSString *)changeForTitle changeForMessage:(NSString *)changeForMessage
+/**
+ *  显示关于网络错误AlertView的辅（tou）助（lan）函数
+ *
+ *  @param networkError     直接传网络回调中的error进来，自动显示本地语言化的错误提示
+ *  @param changeForTitle   标题要换吗？不换直接nil即可（默认“网络错误”）
+ *  @param changeForMessage Message要加点什么不？不加东西的话直接nil（默认是本地语言化的错误,已经带一个换行符咯）
+ */
+- (void)showAlertViewForNetworkError:(NSError *)networkError changeForTitle:(NSString *)changeForTitle addForMessage:(NSString *)addForMessage
 {
     NSString *title = @"网络错误";
     NSString *message = [NSString stringWithFormat:@"%@",[networkError.userInfo objectForKey:@"NSLocalizedDescription"]];
-    NSString *cancelButtonTitle = @"Cancel";
+    NSString *cancelButtonTitle = @"好的嘛";
     if (changeForTitle != nil)
     {
         title = changeForTitle;
     }
-    if (changeForMessage != nil)
+    if (addForMessage != nil)
     {
-        message = changeForMessage;
+        message = [NSString stringWithFormat:@"%@\n%@",message,addForMessage];
     }
     [_ruijieDelegate showAlertViewWithTitle:title message:message cancelButtonTitle:cancelButtonTitle];
 }
