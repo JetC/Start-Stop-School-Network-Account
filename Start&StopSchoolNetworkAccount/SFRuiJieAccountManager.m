@@ -76,7 +76,7 @@
  *
  *  @param ruijieOperationWillBeDoneAfterLogin 决定了在登录锐捷系统后进行什么操作（启、停、检查账户状态）
  */
-- (void)switchAccountStatusToResumeOrSuspend:(SFRuijieOperationWillBeDoneAfterLogin)ruijieOperationWillBeDone
+- (void)switchAccountStatusFor:(SFRuijieOperationWillBeDoneAfterLogin)ruijieOperationWillBeDone
 {
     [_ruijieDelegate configLabelForWaiting];
     [self loginAccountManagingSystemTo:ruijieOperationWillBeDone];
@@ -171,7 +171,7 @@
     NSMutableURLRequest * urlRequest = [NSMutableURLRequest requestWithURL:url];
     [urlRequest setHTTPMethod:@"GET"];
     [urlRequest setHTTPShouldHandleCookies:YES];
-    
+
     NSURLSessionDataTask * dataTask = [defaultSession dataTaskWithRequest:urlRequest completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
     {
         if(error == nil)

@@ -11,6 +11,4 @@
 
 @interface SFViewController : UIViewController<UITextFieldDelegate,SFRuiJieDelegate>
 
--(void)showVerificationCodeImage:(UIImage *)verificationCodeImage;
-
 @end

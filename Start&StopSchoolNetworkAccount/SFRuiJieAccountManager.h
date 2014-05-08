@@ -71,7 +71,7 @@ typedef NS_ENUM(uint, SFRuijieOperationWillBeDoneAfterLogin)
  *
  *  @param ruijieOperationWillBeDone 决定此方法的行为
  */
-- (void)switchAccountStatusToResumeOrSuspend:(SFRuijieOperationWillBeDoneAfterLogin)ruijieOperationWillBeDone;
+- (void)switchAccountStatusFor:(SFRuijieOperationWillBeDoneAfterLogin)ruijieOperationWillBeDone;
 
 
 

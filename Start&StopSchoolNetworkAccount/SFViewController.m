@@ -35,7 +35,6 @@
     
     [[SFRuiJieAccountManager sharedManager]  loadVerificationCodeImage];
     [SFRuiJieAccountManager sharedManager].ruijieDelegate = self;
-    
 }
 
 -(void)showVerificationCodeImage:(UIImage *)verificationCodeImage
@@ -44,7 +43,6 @@
     {
         _verificationCodeImageView = [[UIImageView alloc]init];
     }
-
     _verificationCodeImageView.image = verificationCodeImage;
 }
 
@@ -77,16 +75,25 @@
     _userAccountID = _userAccountIDTextField.text;
     _userAccountPassword = _userAccountPasswordTextField.text;
 //TODO:注意单独检查验证码部分
-    if (!([_userAccountID isEqualToString:@""] && [_userAccountPassword isEqualToString:@""]))
+    NSUserDefaults *userIDAndPasswordDefaults = [NSUserDefaults standardUserDefaults];
+    NSDictionary *dic = userIDAndPasswordDefaults.dictionaryRepresentation;
+    if (!([_userAccountID isEqualToString:@""] || [_userAccountPassword isEqualToString:@""]) && [dic objectForKey:@"userAccountsInfo"] == nil)
+        //TODO:BUg
+    //当用户名和密码存在时
     {
         NSDictionary *dicForUserIdAndPassword = @{@"ID":_userAccountID,@"password":_userAccountPassword};
         NSMutableArray *userAccountsInfoArray = [[NSMutableArray alloc]init];
         [userAccountsInfoArray addObject:dicForUserIdAndPassword];
-        NSUserDefaults *userIDAndPasswordDefaults = [NSUserDefaults standardUserDefaults];
         [userIDAndPasswordDefaults setObject:userAccountsInfoArray forKey:@"userAccountsInfo"];
         [userIDAndPasswordDefaults synchronize];
     }
-    else
+    else if (([_userAccountID isEqualToString:@""] && [_userAccountPassword isEqualToString:@""]) && [dic objectForKey:@"userAccountsInfo"] == nil)
+    //用户名密码不存在且本地无保存的数据
+    {
+        [self showAlertViewWithTitle:@"信息不完整" message:@"检查用户名和密码是否为空" cancelButtonTitle:@"OK"];
+    }
+    else if(([_userAccountID isEqualToString:@""] && [_userAccountPassword isEqualToString:@""]) && [dic objectForKey:@"userAccountsInfo"] != nil)
+    //用户名密码不存在但本地有数据
     {
         NSUserDefaults *userIDAndPasswordDefaults = [NSUserDefaults standardUserDefaults];
         NSMutableArray *userAccountsInfoArray = [userIDAndPasswordDefaults objectForKey:@"userAccountsInfo"];
@@ -139,13 +146,13 @@
         switch (operationWillBeDone)
         {
             case SFRuijieResumeAccount:
-                [[SFRuiJieAccountManager sharedManager] switchAccountStatusToResumeOrSuspend:SFRuijieResumeAccount];
+                [[SFRuiJieAccountManager sharedManager] switchAccountStatusFor:SFRuijieResumeAccount];
                 break;
             case SFRuijieSuspendAccount:
-                [[SFRuiJieAccountManager sharedManager] switchAccountStatusToResumeOrSuspend:SFRuijieSuspendAccount];
+                [[SFRuiJieAccountManager sharedManager] switchAccountStatusFor:SFRuijieSuspendAccount];
                 break;
             case SFRuijieCheckAccountAvailability:
-                [[SFRuiJieAccountManager sharedManager] switchAccountStatusToResumeOrSuspend:SFRuijieCheckAccountAvailability];
+                [[SFRuiJieAccountManager sharedManager] switchAccountStatusFor:SFRuijieCheckAccountAvailability];
                 break;
 
             default:
