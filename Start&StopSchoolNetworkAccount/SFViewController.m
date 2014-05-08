@@ -14,11 +14,15 @@
 
 @interface SFViewController ()
 
+@property (weak, nonatomic) IBOutlet UITextField *userAccountIDTextField;
+@property (weak, nonatomic) IBOutlet UITextField *userAccountPasswordTextField;
+@property (weak, nonatomic) IBOutlet UITextField *verificationCodeTextField;
 @property (strong, nonatomic) IBOutlet UIImageView *verificationCodeImageView;
-@property (weak, nonatomic) IBOutlet UITextField *verificationCodeTextFieldView;
 @property (weak, nonatomic) IBOutlet UIButton *resumeAccountButton;
 @property (weak, nonatomic) IBOutlet UIButton *suspendAccountButton;
 @property (weak, nonatomic) IBOutlet UILabel *userAccountStatusLabel;
+@property (strong, nonatomic) NSString *userAccountID;
+@property (strong, nonatomic) NSString *userAccountPassword;
 @property (strong, nonatomic) NSString *userInputedVerificationCode;
 
 @end
@@ -53,38 +57,33 @@
 
 - (IBAction)resumeAccount:(id)sender
 {
-    [self submitVerificationCode];
+    [self submitUserInputedInfo];
     
-    [self setupUserIDAndPasswordAndVerificationCode];
-    [[SFRuiJieAccountManager sharedManager] switchAccountStatusToResumeOrSuspend:SFRuijieResumeAccount];
+    [self setupUserIDAndPasswordAndVerificationCodeFor:SFRuijieResumeAccount];
 }
 
 - (IBAction)suspendAccount:(id)sender
 {
-    [self submitVerificationCode];
-    [self setupUserIDAndPasswordAndVerificationCode];
-    [[SFRuiJieAccountManager sharedManager] switchAccountStatusToResumeOrSuspend:SFRuijieSuspendAccount];
+    [self submitUserInputedInfo];
+    [self setupUserIDAndPasswordAndVerificationCodeFor:SFRuijieSuspendAccount];
+
 }
 - (IBAction)checkAccountStatus:(id)sender
 {
-    [self checkAccountStatus];
+    [self submitUserInputedInfo];
+
+    [self setupUserIDAndPasswordAndVerificationCodeFor:SFRuijieCheckAccountAvailability];
 }
 
-- (void)checkAccountStatus
-{
-    [self submitVerificationCode];
-    
-    [self setupUserIDAndPasswordAndVerificationCode];
-    
-    [[SFRuiJieAccountManager sharedManager]checkUserAccountStatus];
-}
 
 /**
  *  获取当前TextField中用户输入的验证码并传值给锐捷的Model
  */
-- (void)submitVerificationCode
+- (void)submitUserInputedInfo
 {
-    _userInputedVerificationCode = _verificationCodeTextFieldView.text;
+    _userInputedVerificationCode = _verificationCodeTextField.text;
+    _userAccountID = _userAccountIDTextField.text;
+    _userAccountPassword = _userAccountPasswordTextField.text;
 }
 
 - (void)configLabelForWaiting
@@ -129,14 +128,35 @@
     }
 }
 
-- (void)setupUserIDAndPasswordAndVerificationCode
+- (void)setupUserIDAndPasswordAndVerificationCodeFor:(SFRuijieOperationWillBeDoneAfterLogin)operationWillBeDone
 {
     static NSInteger isFirstLoad = 0;
     if (isFirstLoad == 0)
     {
-        [[SFRuiJieAccountManager sharedManager] setupUserAccountID:@"2012301130125" andPassword:@"204765" VerificationCode:_userInputedVerificationCode];
-        isFirstLoad++;
+        if (!([_userAccountID isEqualToString:@""] && [_userAccountPassword isEqualToString:@""] && [_userInputedVerificationCode isEqualToString:@""]))
+        {
+            [[SFRuiJieAccountManager sharedManager] setupUserAccountID:_userAccountID andPassword:_userAccountPassword VerificationCode:_userInputedVerificationCode];
+            isFirstLoad++;
+            switch (operationWillBeDone)
+            {
+                case SFRuijieResumeAccount:
+                    [[SFRuiJieAccountManager sharedManager] switchAccountStatusToResumeOrSuspend:SFRuijieResumeAccount];
+                case SFRuijieSuspendAccount:
+                    [[SFRuiJieAccountManager sharedManager] switchAccountStatusToResumeOrSuspend:SFRuijieSuspendAccount];
+                case SFRuijieCheckAccountAvailability:
+                    [[SFRuiJieAccountManager sharedManager] switchAccountStatusToResumeOrSuspend:SFRuijieCheckAccountAvailability];
+                    break;
+                    
+                default:
+                    break;
+            }
+        }
+        else
+        {
+            [self showAlertViewWithTitle:@"输入错误" message:@"说好的用户名密码验证码呢>_<" cancelButtonTitle:@"啊 马上！"];
+        }
     }
+//TODO:做到先检查用户名密码验证码再继续操作
 
 }
 

@@ -50,7 +50,11 @@
 {
     NSURL *url = [NSURL URLWithString:@"https://whu-sb.whu.edu.cn:8443/selfservice/common/web/verifycode.jsp"];
     NSURLSessionConfiguration *defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
+//7s后获取验证码的连接超时
+//TODO: 第一次7s，之后如果再次尝试的话，要延长超时时限
+    defaultConfigObject.timeoutIntervalForRequest = kTimeIntervalForVerificationCodeImage;
     NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration: defaultConfigObject delegate: self delegateQueue: [NSOperationQueue mainQueue]];
+
     NSURLSessionDataTask * dataTask = [defaultSession dataTaskWithURL:url completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
     {
         if(error == nil)
@@ -62,6 +66,7 @@
         else
         {
             NSLog(@"Error: %@", error);
+            [self showAlertViewForNetworkError:error changeForTitle:nil changeForMessage:nil];
         }
     }];
     
@@ -70,32 +75,31 @@
 
 
 /**
- *  用于使头文件与本文件中方法名称不同，并且设置resumeOrSuspend状态
+ *  用于使头文件与本文件中方法名称不同，并且设置ruijieOperationWillBeDoneAfterLogin状态
  *
- *  @param resumeOrSuspend 区分启、停操作，仅允许输入NSString类型的resume或suspend（不区分大小写）。
+ *  @param ruijieOperationWillBeDoneAfterLogin 决定了在登录锐捷系统后进行什么操作（启、停、检查账户状态）
  */
-- (void)switchAccountStatusToResumeOrSuspend:(SFRuijieOperationWillBeDoneAfterLogin)ruijieOperationWillBeDoneAfterLogin
+- (void)switchAccountStatusToResumeOrSuspend:(SFRuijieOperationWillBeDoneAfterLogin)ruijieOperationWillBeDone
 {
     [_ruijieDelegate configLabelForWaiting];
-    [self loginAccountManagingSystemTo:ruijieOperationWillBeDoneAfterLogin];
+    [self loginAccountManagingSystemTo:ruijieOperationWillBeDone];
 }
 
 /**
- *  第一步：触发login锐捷系统操作，
+ *  启、停操作的第一步：登录锐捷系统
  *
- *  @param triggerAccountManagement 回调成功后，若为YES，则会继续触发一系列函数直至完成启或停的操作,若为NO，则触发检查账号状态的函数
+ *  @param ruijieOperationWillBeDoneAfterLogin 决定了在登录锐捷系统后进行什么操作（启、停、检查账户状态）
  */
 - (void)loginAccountManagingSystemTo:(SFRuijieOperationWillBeDoneAfterLogin)ruijieOperationWillBeDoneAfterLogin
 {
     NSURL *url = [NSURL URLWithString:@"https://whu-sb.whu.edu.cn:8443/selfservice/module/scgroup/web/login_judge.jsf"];
     NSURLSessionConfiguration *defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
+    defaultConfigObject.timeoutIntervalForRequest = kTimeIntervalForLogin;
     NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration: defaultConfigObject delegate: self delegateQueue: nil];
     NSMutableURLRequest * urlRequest = [NSMutableURLRequest requestWithURL:url];
     NSString *params = [NSString stringWithFormat:@"act=add&name=%@&password=%@&verify=%@",_userAccountIDForSchoolNetwork,_userAccountPasswordForSchoolNetwork,_verificationCode];
-//    NSData *data = [params dataUsingEncoding:NSUnicodeStringEncoding];
-//    [urlRequest setHTTPBody:data];
     [urlRequest setHTTPMethod:@"POST"];
-    [urlRequest setHTTPBody:[params dataUsingEncoding:NSASCIIStringEncoding]];
+    [urlRequest setHTTPBody:[params dataUsingEncoding:NSUTF8StringEncoding]];
     [urlRequest setHTTPShouldHandleCookies:YES];
     
     NSURLSessionDataTask * dataTask = [defaultSession dataTaskWithRequest:urlRequest completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
@@ -124,13 +128,17 @@
             }
             else
             {
+//TODO:根据返回的错误信息做到判断是哪部分出错
                 NSLog(@"登录出错，检查下用户名密码验证码呀");
+                [_ruijieDelegate showAlertViewWithTitle:@"所填信息错误" message:@"登录出错，检查下用户名密码验证码呀"cancelButtonTitle:@"Cancel"];
+                [self loadVerificationCodeImage];
             }
 
         }
         else
         {
             NSLog(@"NetWork Error: %@", error);
+            [self showAlertViewForNetworkError:error changeForTitle:nil changeForMessage:nil];
         }
     }];
     
@@ -157,6 +165,7 @@
     }
     NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@",urlString]];
     NSURLSessionConfiguration *defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
+    defaultConfigObject.timeoutIntervalForRequest = kTimeIntervalForFetchAuthorizationInfo;
     NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration: defaultConfigObject delegate:self delegateQueue: [NSOperationQueue mainQueue]];
     NSMutableURLRequest * urlRequest = [NSMutableURLRequest requestWithURL:url];
     [urlRequest setHTTPMethod:@"GET"];
@@ -168,19 +177,15 @@
         {
             NSLog(@"已接收到Input值");
             NSString *startAccountContentRecirvedString = [[NSString alloc]initWithData:data encoding:NSASCIIStringEncoding];
-            NSString *patternOfOperationVerificationCode = @"(?<=type=\"hidden\" name=\"UserOperationForm:operationVerifyCode\" value=\").*(?=\" />)";
-            NSString *patternOfsubmitCodeId = @"(?<=name=\"submitCodeId\" value=\").*(?=\" />)";
-            NSString *patternOfcom_sun_faces_VIEW = @"(?<=id=\"com.sun.faces.VIEW\" value=\").*(?=\" /><input)";
-            _operationVerifyCode = [self analyseStringUsingRegularExpression:startAccountContentRecirvedString usingRegularExpression:patternOfOperationVerificationCode];
-            _submitCodeId = [self analyseStringUsingRegularExpression:startAccountContentRecirvedString usingRegularExpression:patternOfsubmitCodeId];
-            _comSunFacesVIEW = [self analyseStringUsingRegularExpression:startAccountContentRecirvedString usingRegularExpression:patternOfcom_sun_faces_VIEW];
-            
+
+            [self analyseRegularExpressionFromSourceString:startAccountContentRecirvedString];
+
             [self changeAccountStatusTo:operationWillBeDone];
-            
         }
         else
         {
             NSLog(@"Error: %@", error);
+            [self showAlertViewForNetworkError:error changeForTitle:nil changeForMessage:nil];
         }
     }];
     
@@ -216,6 +221,7 @@
     }
     NSURL *url = [NSURL URLWithString:urlString];
     NSURLSessionConfiguration *defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
+    defaultConfigObject.timeoutIntervalForRequest = kTimeIntervalForChangeAccountStatus;
     NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration: defaultConfigObject delegate: self delegateQueue: nil];
     NSMutableURLRequest * urlRequest = [NSMutableURLRequest requestWithURL:url];
     NSString *suspendString = operationGB2312NameString;
@@ -228,29 +234,36 @@
     
     NSURLSessionDataTask * dataTask = [defaultSession dataTaskWithRequest:urlRequest completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
     {
-        NSString * completionString= [[NSString alloc]initWithData:data encoding:NSASCIIStringEncoding];
-        NSLog(@"%@",completionString);
-        if ([completionString rangeOfString:@"alert"].location != NSNotFound)
+        if (error == nil)
         {
-            NSLog(@"成功%@",operationChineseNameString);
-            [self checkUserAccountStatus];
-            [_ruijieDelegate showSuccessAlertView];
-        }
-        else if ([completionString rangeOfString:@"ÒÑ¾­´¦ÓÚÕý³£×´Ì¬,ÎÞÐèÔÙ½øÐÐ»Ö¸´!"].location != NSNotFound)
-        {
-            NSLog(@"账户已经是正常了吧？");
-            [_ruijieDelegate showAlertViewWithTitle:@"请注意账户目前状态" message:@"账户已经是正常了吧？" cancelButtonTitle:nil];
-        }
-        else if ([completionString rangeOfString:@"ÒÑ¾­´¦ÓÚÔÝÍ£×´Ì¬,ÎÞÐèÔÙ½øÐÐÔÝÍ£!"].location != NSNotFound)
-        {
-            NSLog(@"账户已经停用了吧？");
-            [_ruijieDelegate showAlertViewWithTitle:@"请注意账户目前状态" message:@"账户已经停用了吧？" cancelButtonTitle:nil];
+            NSString * completionString= [[NSString alloc]initWithData:data encoding:NSASCIIStringEncoding];
+            NSLog(@"%@",completionString);
+            if ([completionString rangeOfString:@"alert"].location != NSNotFound)
+            {
+                NSLog(@"成功%@",operationChineseNameString);
+                [self checkUserAccountStatus];
+                [_ruijieDelegate showSuccessAlertView];
+            }
+            else if ([completionString rangeOfString:@"ÒÑ¾­´¦ÓÚÕý³£×´Ì¬,ÎÞÐèÔÙ½øÐÐ»Ö¸´!"].location != NSNotFound)
+            {
+                NSLog(@"账户已经是正常了吧？");
+                [_ruijieDelegate showAlertViewWithTitle:@"账户已经是开启状态" message:@"伦家账户本来就是是正常了啦" cancelButtonTitle:nil];
+            }
+            else if ([completionString rangeOfString:@"ÒÑ¾­´¦ÓÚÔÝÍ£×´Ì¬,ÎÞÐèÔÙ½øÐÐÔÝÍ£!"].location != NSNotFound)
+            {
+                NSLog(@"账户已经停用了吧？");
+                [_ruijieDelegate showAlertViewWithTitle:@"账户已经是暂停状态" message:@"伦家账户本来就已经是停用了啦" cancelButtonTitle:nil];
+            }
+            else
+            {
+                NSLog(@"%@失败请重试",operationChineseNameString);
+            }
         }
         else
         {
-            NSLog(@"%@失败请重试",operationChineseNameString);
+            [self showAlertViewForNetworkError:error changeForTitle:nil changeForMessage:nil];
         }
-        
+
     }];
     [dataTask resume];
     NSLog(@"POST Over!");
@@ -259,32 +272,6 @@
 }
 
 #pragma mark Config Kits
-
-/**
- *  通过传入正则表达式解析内容
- *
- *  @param sourceString      待分析内容
- *  @param regularExpression 正则表达式
- *
- *  @return 返回找到的字符串（仅有一个）
- */
-- (NSString *)analyseStringUsingRegularExpression:(NSString *)sourceString usingRegularExpression:(NSString *)regularExpression
-{
-    NSRegularExpression *reg = [NSRegularExpression regularExpressionWithPattern:regularExpression options:0 error:nil];
-    NSArray* match = [reg matchesInString:sourceString options:0 range:NSMakeRange(0, [sourceString length])];
-    NSString *resultString = [[NSString alloc]init];
-    if (match.count != 0)
-    {
-        for (NSTextCheckingResult *matc in match)
-        {
-            NSRange range = [matc range];
-            NSLog(@"%@",[sourceString substringWithRange:range]);
-            resultString = [sourceString substringWithRange:range];
-        }
-    }
-    return resultString;
-}
-
 
 /**
  *  负责取消系统对自签名证书的安全限制
@@ -309,7 +296,7 @@
 {
     NSURL *url = [NSURL URLWithString:@"https://whu-sb.whu.edu.cn:8443/selfservice/module/userself/web/self_suspend.jsf"];
     NSURLSessionConfiguration *defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
-    
+    defaultConfigObject.timeoutIntervalForRequest = kTimeIntervalForCheckAccountStatus;
     NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration: defaultConfigObject delegate: self delegateQueue: [NSOperationQueue mainQueue]];
     NSMutableURLRequest * urlRequest = [NSMutableURLRequest requestWithURL:url];
     [urlRequest setHTTPMethod:@"POST"];
@@ -348,6 +335,7 @@
         else
         {
             NSLog(@"Error May Occur at Login");
+            [self showAlertViewForNetworkError:error changeForTitle:nil changeForMessage:nil];
         }
 
     }];
@@ -362,6 +350,64 @@
     _userAccountPasswordForSchoolNetwork = password;
     _verificationCode = verificationCode;
 }
+
+/**
+ *  通过传入的String，用内部保存的正则表达式分析，找出结果后放到实例变量中
+ *
+ *  @param sourceString 传入的内容String
+ */
+- (void)analyseRegularExpressionFromSourceString:(NSString *)sourceString
+{
+    NSString *patternOfOperationVerificationCode = @"(?<=type=\"hidden\" name=\"UserOperationForm:operationVerifyCode\" value=\").*(?=\" />)";
+    NSString *patternOfsubmitCodeId = @"(?<=name=\"submitCodeId\" value=\").*(?=\" />)";
+    NSString *patternOfcom_sun_faces_VIEW = @"(?<=id=\"com.sun.faces.VIEW\" value=\").*(?=\" /><input)";
+    _operationVerifyCode = [self analyseStringUsingRegularExpression:sourceString usingRegularExpression:patternOfOperationVerificationCode];
+    _submitCodeId = [self analyseStringUsingRegularExpression:sourceString usingRegularExpression:patternOfsubmitCodeId];
+    _comSunFacesVIEW = [self analyseStringUsingRegularExpression:sourceString usingRegularExpression:patternOfcom_sun_faces_VIEW];
+}
+
+/**
+ *  通过传入正则表达式解析内容
+ *
+ *  @param sourceString      待分析内容
+ *  @param regularExpression 正则表达式
+ *
+ *  @return 返回找到的字符串（仅支持一个）
+ */
+- (NSString *)analyseStringUsingRegularExpression:(NSString *)sourceString usingRegularExpression:(NSString *)regularExpression
+{
+    NSRegularExpression *reg = [NSRegularExpression regularExpressionWithPattern:regularExpression options:0 error:nil];
+    NSArray* match = [reg matchesInString:sourceString options:0 range:NSMakeRange(0, [sourceString length])];
+    NSString *resultString = [[NSString alloc]init];
+    if (match.count != 0)
+    {
+        for (NSTextCheckingResult *matc in match)
+        {
+            NSRange range = [matc range];
+            NSLog(@"%@",[sourceString substringWithRange:range]);
+            resultString = [sourceString substringWithRange:range];
+        }
+    }
+    return resultString;
+}
+
+
+- (void)showAlertViewForNetworkError:(NSError *)networkError changeForTitle:(NSString *)changeForTitle changeForMessage:(NSString *)changeForMessage
+{
+    NSString *title = @"网络错误";
+    NSString *message = [NSString stringWithFormat:@"%@",[networkError.userInfo objectForKey:@"NSLocalizedDescription"]];
+    NSString *cancelButtonTitle = @"Cancel";
+    if (changeForTitle != nil)
+    {
+        title = changeForTitle;
+    }
+    if (changeForMessage != nil)
+    {
+        message = changeForMessage;
+    }
+    [_ruijieDelegate showAlertViewWithTitle:title message:message cancelButtonTitle:cancelButtonTitle];
+}
+
 
 
 @end

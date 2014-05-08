@@ -7,6 +7,15 @@
 //
 
 #import <Foundation/Foundation.h>
+
+#define kTimeIntervalForVerificationCodeImage 3
+#define kTimeIntervalForLogin 3
+#define kTimeIntervalForFetchAuthorizationInfo 3
+#define kTimeIntervalForChangeAccountStatus 3
+#define kTimeIntervalForCheckAccountStatus 3
+
+
+
 @protocol SFRuiJieDelegate
 
 - (void)showVerificationCodeImage:(UIImage *)verificationCodeImage;
@@ -49,7 +58,7 @@ typedef NS_ENUM(uint, SFRuijieOperationWillBeDoneAfterLogin)
 - (void)setupUserAccountID:(NSString *)userAccountID andPassword:(NSString *)password VerificationCode:(NSString *)verificationCode;
 - (void)loginAccountManagingSystemTo:(SFRuijieOperationWillBeDoneAfterLogin)ruijieOperationWillBeDoneAfterLogin;
 - (void)checkUserAccountStatus;
-- (void)switchAccountStatusToResumeOrSuspend:(SFRuijieOperationWillBeDoneAfterLogin)ruijieOperationWillBeDoneAfterLogin;
+- (void)switchAccountStatusToResumeOrSuspend:(SFRuijieOperationWillBeDoneAfterLogin)ruijieOperationWillBeDone;
 
 
 
