@@ -13,6 +13,6 @@
 - (IBAction)switchAccountStatus:(id)sender
 {
     SFDigitalChinaAccountManager *digitalChinaAccountManager = [[SFDigitalChinaAccountManager alloc]init];
-    [digitalChinaAccountManager loginAccountManagingSystemTo:SFDigitalChinaResumeAccount];
+    [digitalChinaAccountManager fetchParam];
 }
 @end

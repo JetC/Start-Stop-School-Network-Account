@@ -107,7 +107,7 @@
         if(error == nil)
         {
             NSString *stringFromData = [[NSString alloc]initWithData:data encoding:NSASCIIStringEncoding];
-//            NSLog(@"%@",stringFromData);
+            NSLog(@"%@",stringFromData);
             if ([stringFromData rangeOfString:@"self.location='../../../module/webcontent/web/index_self.jsf?'"].location != NSNotFound)
             {
                 NSLog(@"成功登陆");
@@ -125,6 +125,10 @@
                     default:
                         break;
                 }
+            }
+            else if ([stringFromData rangeOfString:@"errorMsg=ÓÃ»§²»´æÔÚ»òÃÜÂë´íÎó"].location != NSNotFound)
+            {
+                NSLog(@"不是锐捷用户或用户名密码错误");
             }
             else
             {

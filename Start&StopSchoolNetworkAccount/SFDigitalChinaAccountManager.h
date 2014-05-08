@@ -8,6 +8,12 @@
 
 #import <Foundation/Foundation.h>
 
+#define kTimeIntervalForVerificationCodeImage 3
+#define kTimeIntervalForLogin 3
+#define kTimeIntervalForFetchAuthorizationInfo 3
+#define kTimeIntervalForChangeAccountStatus 3
+#define kTimeIntervalForCheckAccountStatus 3
+
 @protocol SFDigitalChinaDelegate <NSObject>
 
 
@@ -31,5 +37,6 @@ typedef NS_ENUM(uint, SFDigitalChinaOperationWillBeDone)
     SFDigitalChinaCheckAccountAvailability
 };
 - (void)loginAccountManagingSystemTo:(SFDigitalChinaOperationWillBeDone)digitalChinaOperationWillBeDone;
+- (void)fetchParam;
 
 @end
