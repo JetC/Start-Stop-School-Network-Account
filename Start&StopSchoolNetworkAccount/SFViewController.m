@@ -82,6 +82,24 @@
     _userInputedVerificationCode = _verificationCodeTextField.text;
     _userAccountID = _userAccountIDTextField.text;
     _userAccountPassword = _userAccountPasswordTextField.text;
+//TODO:注意单独检查验证码部分
+    if (!([_userAccountID isEqualToString:@""] && [_userAccountPassword isEqualToString:@""]))
+    {
+        NSDictionary *dicForUserIdAndPassword = @{@"ID":_userAccountID,@"password":_userAccountPassword};
+        NSMutableArray *userAccountsInfoArray = [[NSMutableArray alloc]init];
+        [userAccountsInfoArray addObject:dicForUserIdAndPassword];
+        NSUserDefaults *userIDAndPasswordDefaults = [NSUserDefaults standardUserDefaults];
+        [userIDAndPasswordDefaults setObject:userAccountsInfoArray forKey:@"userAccountsInfo"];
+        [userIDAndPasswordDefaults synchronize];
+    }
+    else
+    {
+        NSUserDefaults *userIDAndPasswordDefaults = [NSUserDefaults standardUserDefaults];
+        NSMutableArray *userAccountsInfoArray = [userIDAndPasswordDefaults objectForKey:@"userAccountsInfo"];
+        NSDictionary *dicForUserIdAndPassword = [userAccountsInfoArray objectAtIndex:0];
+        _userAccountID = [dicForUserIdAndPassword objectForKey:@"ID"];
+        _userAccountPassword = [dicForUserIdAndPassword objectForKey:@"password"];
+    }
 }
 
 - (void)configLabelForWaiting

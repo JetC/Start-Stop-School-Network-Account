@@ -107,7 +107,7 @@
         if(error == nil)
         {
             NSString *stringFromData = [[NSString alloc]initWithData:data encoding:NSASCIIStringEncoding];
-            NSLog(@"%@",stringFromData);
+//            NSLog(@"%@",stringFromData);
             if ([stringFromData rangeOfString:@"self.location='../../../module/webcontent/web/index_self.jsf?'"].location != NSNotFound)
             {
                 NSLog(@"成功登陆");
@@ -237,7 +237,7 @@
         if (error == nil)
         {
             NSString * completionString= [[NSString alloc]initWithData:data encoding:NSASCIIStringEncoding];
-            NSLog(@"%@",completionString);
+//            NSLog(@"%@",completionString);
             if ([completionString rangeOfString:@"alert"].location != NSNotFound)
             {
                 NSLog(@"成功%@",operationChineseNameString);
@@ -308,7 +308,7 @@
         if (data.length > 10000)
         {
             NSString *completionString= [[NSString alloc]initWithData:data encoding:NSASCIIStringEncoding];
-            NSLog(@"%@",completionString);
+//            NSLog(@"%@",completionString);
             NSRegularExpression *normalStateIndicatorString = [NSRegularExpression regularExpressionWithPattern:[NSString stringWithFormat:@"<span id=\"UserOperationForm:stateFlag\">&#27491;&#24120;</span>"] options:0 error:nil];
             NSRegularExpression *suspendingStateIndicatorString = [NSRegularExpression regularExpressionWithPattern:[NSString stringWithFormat:@"<span id=\"UserOperationForm:stateFlag\">&#26242;&#20572;</span>"] options:0 error:nil];
             NSInteger numberOfMatchesOfNormalStateString = [normalStateIndicatorString numberOfMatchesInString:completionString options:0 range:NSMakeRange(0, [completionString length])];
@@ -384,7 +384,6 @@
         for (NSTextCheckingResult *matc in match)
         {
             NSRange range = [matc range];
-            NSLog(@"%@",[sourceString substringWithRange:range]);
             resultString = [sourceString substringWithRange:range];
         }
     }

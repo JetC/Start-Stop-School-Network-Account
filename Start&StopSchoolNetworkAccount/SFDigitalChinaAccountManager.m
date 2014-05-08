@@ -45,7 +45,7 @@
         {
 //            NSLog(@"成功登陆");
             NSString * completionString= [[NSString alloc]initWithData:data encoding:NSISOLatin1StringEncoding];
-            NSLog(@"completionString: %@",completionString);
+//            NSLog(@"completionString: %@",completionString);
             if ([completionString rangeOfString:@"success"].location != NSNotFound)
             {
                 NSLog(@"检测到成功信息");
