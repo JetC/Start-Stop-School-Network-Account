@@ -58,7 +58,6 @@
 - (IBAction)resumeAccount:(id)sender
 {
     [self submitUserInputedInfo];
-    
     [self setupUserIDAndPasswordAndVerificationCodeFor:SFRuijieResumeAccount];
 }
 
@@ -71,7 +70,6 @@
 - (IBAction)checkAccountStatus:(id)sender
 {
     [self submitUserInputedInfo];
-
     [self setupUserIDAndPasswordAndVerificationCodeFor:SFRuijieCheckAccountAvailability];
 }
 
@@ -130,32 +128,30 @@
 
 - (void)setupUserIDAndPasswordAndVerificationCodeFor:(SFRuijieOperationWillBeDoneAfterLogin)operationWillBeDone
 {
-    static NSInteger isFirstLoad = 0;
-    if (isFirstLoad == 0)
+    if (!([_userAccountID isEqualToString:@""] && [_userAccountPassword isEqualToString:@""] && [_userInputedVerificationCode isEqualToString:@""]))
     {
-        if (!([_userAccountID isEqualToString:@""] && [_userAccountPassword isEqualToString:@""] && [_userInputedVerificationCode isEqualToString:@""]))
+        [[SFRuiJieAccountManager sharedManager] setupUserAccountID:_userAccountID andPassword:_userAccountPassword VerificationCode:_userInputedVerificationCode];
+        switch (operationWillBeDone)
         {
-            [[SFRuiJieAccountManager sharedManager] setupUserAccountID:_userAccountID andPassword:_userAccountPassword VerificationCode:_userInputedVerificationCode];
-            isFirstLoad++;
-            switch (operationWillBeDone)
-            {
-                case SFRuijieResumeAccount:
-                    [[SFRuiJieAccountManager sharedManager] switchAccountStatusToResumeOrSuspend:SFRuijieResumeAccount];
-                case SFRuijieSuspendAccount:
-                    [[SFRuiJieAccountManager sharedManager] switchAccountStatusToResumeOrSuspend:SFRuijieSuspendAccount];
-                case SFRuijieCheckAccountAvailability:
-                    [[SFRuiJieAccountManager sharedManager] switchAccountStatusToResumeOrSuspend:SFRuijieCheckAccountAvailability];
-                    break;
-                    
-                default:
-                    break;
-            }
-        }
-        else
-        {
-            [self showAlertViewWithTitle:@"输入错误" message:@"说好的用户名密码验证码呢>_<" cancelButtonTitle:@"啊 马上！"];
+            case SFRuijieResumeAccount:
+                [[SFRuiJieAccountManager sharedManager] switchAccountStatusToResumeOrSuspend:SFRuijieResumeAccount];
+                break;
+            case SFRuijieSuspendAccount:
+                [[SFRuiJieAccountManager sharedManager] switchAccountStatusToResumeOrSuspend:SFRuijieSuspendAccount];
+                break;
+            case SFRuijieCheckAccountAvailability:
+                [[SFRuiJieAccountManager sharedManager] switchAccountStatusToResumeOrSuspend:SFRuijieCheckAccountAvailability];
+                break;
+
+            default:
+                break;
         }
     }
+    else
+    {
+        [self showAlertViewWithTitle:@"输入错误" message:@"说好的用户名密码验证码呢>_<" cancelButtonTitle:@"啊 马上！"];
+    }
+
 //TODO:做到先检查用户名密码验证码再继续操作
 
 }

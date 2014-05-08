@@ -12,7 +12,7 @@
 
 - (void)loginAccountManagingSystemTo:(SFDigitalChinaOperationWillBeDone)digitalChinaOperationWillBeDone
 {
-    NSInteger isSuspend;
+    NSInteger isSuspend = 0;
     if (digitalChinaOperationWillBeDone == SFDigitalChinaResumeAccount)
     {
         isSuspend = 0;
@@ -23,7 +23,6 @@
     }
     else if (digitalChinaOperationWillBeDone == SFDigitalChinaCheckAccountAvailability)
     {
-        
     }
     else
     {
