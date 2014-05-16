@@ -54,14 +54,12 @@
 
     NSString *password = @"123456";
     NSString *md5EncryptedPassword = [self getMd5_32Bit_String:[NSString stringWithFormat:@"%@%@DCN",password,_param]];
-//    NSData *md5EncryptedPasswordData = [NSData data]
     _hexMd5EncryptedPassword = [md5EncryptedPassword uppercaseString];
     NSString *params = [NSString stringWithFormat:@"preday=true&isCharge=0&username=2012302630057&password=%@&Submit=Submit",_hexMd5EncryptedPassword];
     NSLog(@"%@",params);
 
     [urlRequest setHTTPMethod:@"POST"];
     [urlRequest setHTTPBody:[params dataUsingEncoding:NSISOLatin1StringEncoding]];
-    [urlRequest setHTTPShouldHandleCookies:YES];
 
     NSURLSessionDataTask * dataTask = [defaultSession dataTaskWithRequest:urlRequest completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
     {
@@ -70,6 +68,7 @@
             NSLog(@"Over");
             NSString *completionString= [[NSString alloc]initWithData:data encoding:NSASCIIStringEncoding];
             NSLog(@"%@",completionString);
+            //Ô¤¸¶°üÌìÓÃ»§×ÔÖ÷ÆôÍ£正常登录后的返回
 
         }
     }];
@@ -100,7 +99,7 @@
     NSURLSessionConfiguration *defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
     NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration: defaultConfigObject delegate: self delegateQueue: nil];
     NSMutableURLRequest * urlRequest = [NSMutableURLRequest requestWithURL:url];
-    NSString *params = [NSString stringWithFormat:@"table=101&userName=2012301130125&allowPreday=%d&submit=submit",isSuspend];
+    NSString *params = [NSString stringWithFormat:@"table=101&userName=2012302630057&allowPreday=%ld&submit=submit",(long)isSuspend];
     NSData *data = [params dataUsingEncoding:NSUnicodeStringEncoding];
     [urlRequest setHTTPBody:data];
     [urlRequest setHTTPMethod:@"POST"];
@@ -111,17 +110,17 @@
     {
         if(error == nil)
         {
-//            NSLog(@"成功登陆");
+            NSLog(@"成功登陆");
             NSString * completionString= [[NSString alloc]initWithData:data encoding:NSISOLatin1StringEncoding];
-//            NSLog(@"completionString: %@",completionString);
+            NSLog(@"completionString: %@",completionString);
             if ([completionString rangeOfString:@"success"].location != NSNotFound)
             {
                 NSLog(@"检测到成功信息");
             }
-//            else if ([completionString rangeOfString:@"error : Êý¾Ý¿â³ö´í£¡"].location != NSNotFound)
-//            {
-//                NSLog(@"不是神码用户");
-//            }
+            else if ([completionString rangeOfString:@"error : Êý¾Ý¿â³ö´í£¡"].location != NSNotFound)
+            {
+                NSLog(@"不是神码用户");
+            }
             else if ([completionString rangeOfString:@"error"].location != NSNotFound)
             {
                 NSLog(@"启停操作失败！");
