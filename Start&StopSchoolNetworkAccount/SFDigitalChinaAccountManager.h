@@ -1,42 +1,89 @@
 //
 //  SFDigitalChinaAccountManager.h
-//  Start&StopSchoolNetworkAccount
+//  WHU Mobile
 //
-//  Created by 孙培峰 on 5/3/14.
-//  Copyright (c) 2014 孙培峰. All rights reserved.
+//  Created by 孙培峰 on 5/16/14.
+//  Copyright (c) 2014 黄 嘉恒. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 
-#define kTimeIntervalForVerificationCodeImage 3
-#define kTimeIntervalForLogin 3
-#define kTimeIntervalForFetchAuthorizationInfo 3
-#define kTimeIntervalForChangeAccountStatus 3
-#define kTimeIntervalForCheckAccountStatus 3
-
-@protocol SFDigitalChinaDelegate <NSObject>
-
-
-@end
-
-@interface SFDigitalChinaAccountManager : NSObject<NSURLSessionDelegate>
-
-typedef NS_ENUM(uint, SFDigitalChinaOperationWillBeDone)
+typedef NS_ENUM(NSInteger, SFDigitalChinaAccountResponse)
 {
     /**
-     *  启用神码账号
+     *  网络链接错误
      */
-    SFDigitalChinaResumeAccount,
+    SFDigitalChinaAccountResponseFailed,
     /**
-     *  暂停神码账号
+     *  是神码账户，但密码错误
      */
-    SFDigitalChinaSuspendAccount,
+    SFDigitalChinaAccountResponseWrongPassword,
     /**
-     *  检查神码账号可用性(暂不可用)
+     *  不存在的用户
      */
-    SFDigitalChinaCheckAccountAvailability
+    SFDigitalChinaAccountResponseInvalidAccount,
+    /**
+     *  用户已确定存在
+     */
+    SFDigitalChinaAccountResponseValidAccount,
+    /**
+     *  正在登录神码帐号管理
+     */
+    SFDigitalChinaAccountResponseWillLogin,
+    /**
+     *  正在启用神码账号
+     */
+    SFDigitalChinaAccountResponseWillResume,
+    /**
+     *  已启用神码账号
+     */
+    SFDigitalChinaAccountResponseDidResume,
+    /**
+     *  正在停用神码账号
+     */
+    SFDigitalChinaAccountResponseWillSuspend,
+    /**
+     *  已停用神码账号
+     */
+    SFDigitalChinaAccountResponseDidSuspend,
 };
-- (void)loginAccountManagingSystemTo:(SFDigitalChinaOperationWillBeDone)digitalChinaOperationWillBeDone;
-- (void)fetchParam;
+
+@protocol SFDigitalChinaDelegate
+
+- (void)digitalChinaAccountManageResponse:(SFDigitalChinaAccountResponse)response error:(NSError *)error;
+
 
 @end
+
+@interface SFDigitalChinaAccountManager : NSObject
+
+- (void)changeAccountStatusTo:(NSInteger)isSuspend userAccountID:(NSString *)userAccountID delegate:(__weak id<SFDigitalChinaDelegate>)delegate;
+
+- (void)checkAvailabilityOfAccount:(NSString *)account password:(NSString *)password delegate:(__weak id<SFDigitalChinaDelegate>)delegate;
+
+@end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

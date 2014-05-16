@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "SFDigitalChinaAccountManager.h"
 
-@interface SFDigitalChinaViewController : UIViewController
-- (IBAction)switchAccountStatus:(id)sender;
+@interface SFDigitalChinaViewController : UIViewController<SFDigitalChinaDelegate>
+- (IBAction)checkAccountAvailability:(id)sender;
 
 @end

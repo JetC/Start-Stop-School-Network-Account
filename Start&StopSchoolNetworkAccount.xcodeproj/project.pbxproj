@@ -7,7 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		DF1515B219140001001B1A2D /* SFDigitalChinaAccountManager.m in Sources */ = {isa = PBXBuildFile; fileRef = DF1515B119140001001B1A2D /* SFDigitalChinaAccountManager.m */; };
+		0ACBC2C0CBE44710BC6C6A9E /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7E32C5D503A44740B4805549 /* libPods.a */; };
+		DF076EF519267199004709A3 /* SFDigitalChinaAccountManager.m in Sources */ = {isa = PBXBuildFile; fileRef = DF076EF419267199004709A3 /* SFDigitalChinaAccountManager.m */; };
+		DF076EF8192679C0004709A3 /* NSURLResponse+ZQ.m in Sources */ = {isa = PBXBuildFile; fileRef = DF076EF7192679C0004709A3 /* NSURLResponse+ZQ.m */; };
+		DF076EFB19267B65004709A3 /* NSString+ZQ.m in Sources */ = {isa = PBXBuildFile; fileRef = DF076EFA19267B65004709A3 /* NSString+ZQ.m */; };
 		DF2222351911D2CC00695D99 /* SFRuiJieAccountManager.m in Sources */ = {isa = PBXBuildFile; fileRef = DF2222341911D2CC00695D99 /* SFRuiJieAccountManager.m */; };
 		DF4E7BC4190E427C009C6129 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF4E7BC3190E427C009C6129 /* Foundation.framework */; };
 		DF4E7BC6190E427C009C6129 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF4E7BC5190E427C009C6129 /* CoreGraphics.framework */; };
@@ -38,8 +41,14 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		DF1515B019140001001B1A2D /* SFDigitalChinaAccountManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SFDigitalChinaAccountManager.h; sourceTree = "<group>"; };
-		DF1515B119140001001B1A2D /* SFDigitalChinaAccountManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SFDigitalChinaAccountManager.m; sourceTree = "<group>"; };
+		7E32C5D503A44740B4805549 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		8F2C61D46E8A4779B8D3BBC3 /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = "<group>"; };
+		DF076EF319267199004709A3 /* SFDigitalChinaAccountManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SFDigitalChinaAccountManager.h; sourceTree = "<group>"; };
+		DF076EF419267199004709A3 /* SFDigitalChinaAccountManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SFDigitalChinaAccountManager.m; sourceTree = "<group>"; };
+		DF076EF6192679C0004709A3 /* NSURLResponse+ZQ.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURLResponse+ZQ.h"; sourceTree = "<group>"; };
+		DF076EF7192679C0004709A3 /* NSURLResponse+ZQ.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURLResponse+ZQ.m"; sourceTree = "<group>"; };
+		DF076EF919267B65004709A3 /* NSString+ZQ.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+ZQ.h"; sourceTree = "<group>"; };
+		DF076EFA19267B65004709A3 /* NSString+ZQ.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+ZQ.m"; sourceTree = "<group>"; };
 		DF2222331911D2CC00695D99 /* SFRuiJieAccountManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SFRuiJieAccountManager.h; sourceTree = "<group>"; };
 		DF2222341911D2CC00695D99 /* SFRuiJieAccountManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SFRuiJieAccountManager.m; sourceTree = "<group>"; };
 		DF4E7BC0190E427C009C6129 /* Start&StopSchoolNetworkAccount.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Start&StopSchoolNetworkAccount.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -74,6 +83,7 @@
 				DF4E7BC6190E427C009C6129 /* CoreGraphics.framework in Frameworks */,
 				DF4E7BC8190E427C009C6129 /* UIKit.framework in Frameworks */,
 				DF4E7BC4190E427C009C6129 /* Foundation.framework in Frameworks */,
+				0ACBC2C0CBE44710BC6C6A9E /* libPods.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -97,6 +107,7 @@
 				DF4E7BEB190E427C009C6129 /* Start&StopSchoolNetworkAccountTests */,
 				DF4E7BC2190E427C009C6129 /* Frameworks */,
 				DF4E7BC1190E427C009C6129 /* Products */,
+				8F2C61D46E8A4779B8D3BBC3 /* Pods.xcconfig */,
 			);
 			sourceTree = "<group>";
 		};
@@ -116,6 +127,7 @@
 				DF4E7BC5190E427C009C6129 /* CoreGraphics.framework */,
 				DF4E7BC7190E427C009C6129 /* UIKit.framework */,
 				DF4E7BE5190E427C009C6129 /* XCTest.framework */,
+				7E32C5D503A44740B4805549 /* libPods.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -127,14 +139,18 @@
 				DF4E7BD3190E427C009C6129 /* SFAppDelegate.m */,
 				DF4E7BD5190E427C009C6129 /* Main_iPhone.storyboard */,
 				DF4E7BD8190E427C009C6129 /* Main_iPad.storyboard */,
+				DF076EF6192679C0004709A3 /* NSURLResponse+ZQ.h */,
+				DF076EF7192679C0004709A3 /* NSURLResponse+ZQ.m */,
+				DF076EF919267B65004709A3 /* NSString+ZQ.h */,
+				DF076EFA19267B65004709A3 /* NSString+ZQ.m */,
 				DF4E7BDB190E427C009C6129 /* SFViewController.h */,
 				DF4E7BDC190E427C009C6129 /* SFViewController.m */,
 				DF2222331911D2CC00695D99 /* SFRuiJieAccountManager.h */,
 				DF2222341911D2CC00695D99 /* SFRuiJieAccountManager.m */,
 				DF697B8A1914A877008455AE /* SFDigitalChinaViewController.h */,
 				DF697B8B1914A877008455AE /* SFDigitalChinaViewController.m */,
-				DF1515B019140001001B1A2D /* SFDigitalChinaAccountManager.h */,
-				DF1515B119140001001B1A2D /* SFDigitalChinaAccountManager.m */,
+				DF076EF319267199004709A3 /* SFDigitalChinaAccountManager.h */,
+				DF076EF419267199004709A3 /* SFDigitalChinaAccountManager.m */,
 				DF4E7BDE190E427C009C6129 /* Images.xcassets */,
 				DF4E7BCA190E427C009C6129 /* Supporting Files */,
 			);
@@ -177,9 +193,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = DF4E7BF5190E427C009C6129 /* Build configuration list for PBXNativeTarget "Start&StopSchoolNetworkAccount" */;
 			buildPhases = (
+				A060E81B77BE4FEC9E3AF4FC /* Check Pods Manifest.lock */,
 				DF4E7BBC190E427C009C6129 /* Sources */,
 				DF4E7BBD190E427C009C6129 /* Frameworks */,
 				DF4E7BBE190E427C009C6129 /* Resources */,
+				CA69EB0DA5444D628D825ADA /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -264,16 +282,51 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		A060E81B77BE4FEC9E3AF4FC /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		CA69EB0DA5444D628D825ADA /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Pods-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		DF4E7BBC190E427C009C6129 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DF1515B219140001001B1A2D /* SFDigitalChinaAccountManager.m in Sources */,
 				DF4E7BD0190E427C009C6129 /* main.m in Sources */,
 				DF697B8C1914A877008455AE /* SFDigitalChinaViewController.m in Sources */,
 				DF4E7BDD190E427C009C6129 /* SFViewController.m in Sources */,
+				DF076EF519267199004709A3 /* SFDigitalChinaAccountManager.m in Sources */,
 				DF4E7BD4190E427C009C6129 /* SFAppDelegate.m in Sources */,
+				DF076EF8192679C0004709A3 /* NSURLResponse+ZQ.m in Sources */,
+				DF076EFB19267B65004709A3 /* NSString+ZQ.m in Sources */,
 				DF2222351911D2CC00695D99 /* SFRuiJieAccountManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -406,6 +459,7 @@
 		};
 		DF4E7BF6190E427C009C6129 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8F2C61D46E8A4779B8D3BBC3 /* Pods.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -419,6 +473,7 @@
 		};
 		DF4E7BF7190E427C009C6129 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8F2C61D46E8A4779B8D3BBC3 /* Pods.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;

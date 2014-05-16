@@ -1,166 +1,161 @@
 //
 //  SFDigitalChinaAccountManager.m
-//  Start&StopSchoolNetworkAccount
+//  WHU Mobile
 //
-//  Created by 孙培峰 on 5/3/14.
-//  Copyright (c) 2014 孙培峰. All rights reserved.
+//  Created by 孙培峰 on 5/16/14.
+//  Copyright (c) 2014 黄 嘉恒. All rights reserved.
 //
 
 #import "SFDigitalChinaAccountManager.h"
+#import <RegExCategories/RegExCategories.h>
 #import <CommonCrypto/CommonDigest.h>
+#import "NSString+ZQ.h"
 
-@interface SFDigitalChinaAccountManager ()
+@interface SFDigitalChinaAccountManager ()<NSURLSessionDelegate>
 
-@property (strong, nonatomic)NSString *param;
-@property (strong, nonatomic)NSString *hexMd5EncryptedPassword;
+@property (strong, nonatomic) NSString *param;
+@property (strong, nonatomic) NSURLSession *session;
 
 @end
 
-
 @implementation SFDigitalChinaAccountManager
 
-- (void)fetchParam
+- (id)init
 {
-    NSURL *url = [NSURL URLWithString:@"http://whu-sa.whu.edu.cn/user_preday.jsp"];
-    NSURLSessionConfiguration *defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
-    defaultConfigObject.timeoutIntervalForRequest = kTimeIntervalForFetchAuthorizationInfo;
-    NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration: defaultConfigObject delegate:self delegateQueue: [NSOperationQueue mainQueue]];
-    NSMutableURLRequest * urlRequest = [NSMutableURLRequest requestWithURL:url];
-    [urlRequest setHTTPMethod:@"GET"];
-    [urlRequest setHTTPShouldHandleCookies:YES];
-
-    NSURLSessionDataTask * dataTask = [defaultSession dataTaskWithRequest:urlRequest completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
+    self = [super init];
+    if (self)
     {
-        if(error == nil)
-        {
-            NSString *completionString= [[NSString alloc]initWithData:data encoding:NSISOLatin1StringEncoding];
-            _param = [self analyseStringUsingRegularExpression:[NSString stringWithFormat:@"%@",completionString] usingRegularExpression:@"(?<=<param name = \"param0\" value = \").*(?=\">)"];
-            [self loginAccountManagingSystemTo:SFDigitalChinaResumeAccount];
-        }
+        NSURLSessionConfiguration *config = [NSURLSessionConfiguration defaultSessionConfiguration];
+        config.timeoutIntervalForRequest = 15;
+        _session = [NSURLSession sessionWithConfiguration:config delegate:self delegateQueue:nil];
+    }
+    return self;
+}
+
+- (void)checkAvailabilityOfAccount:(NSString *)account password:(NSString *)password delegate:(__weak id<SFDigitalChinaDelegate>)delegate
+{
+    [self loginDigitalChinaWithAccount:account password:password delegate:delegate];
+}
+
+- (void)loginDigitalChinaWithAccount:(NSString *)account password:(NSString *)password delegate:(__weak id<SFDigitalChinaDelegate>)delegate
+{
+    [self fetchParamWithCompletionHandler:^{
+        [self loginAccountManagingSystemWithAccount:account password:password delegate:delegate];
     }];
-    [dataTask resume];
 }
 
 
-
-- (void)loginAccountManagingSystemTo:(SFDigitalChinaOperationWillBeDone)digitalChinaOperationWillBeDoneAfterLogin
+- (void)loginAccountManagingSystemWithAccount:(NSString *)userAccountID password:(NSString *)password delegate:(__weak id<SFDigitalChinaDelegate>)delegate
 {
-    NSURL *url = [NSURL URLWithString:@"http://whu-sa.whu.edu.cn/loginForPreday.jsp"];
-    NSURLSessionConfiguration *defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
-    defaultConfigObject.timeoutIntervalForRequest = kTimeIntervalForLogin;
-    NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration: defaultConfigObject delegate: self delegateQueue: nil];
-    NSMutableURLRequest * urlRequest = [NSMutableURLRequest requestWithURL:url];
-
-
-    NSString *password = @"123456";
     NSString *md5EncryptedPassword = [self getMd5_32Bit_String:[NSString stringWithFormat:@"%@%@DCN",password,_param]];
-    _hexMd5EncryptedPassword = [md5EncryptedPassword uppercaseString];
-    NSString *params = [NSString stringWithFormat:@"preday=true&isCharge=0&username=2012302630057&password=%@&Submit=Submit",_hexMd5EncryptedPassword];
+    md5EncryptedPassword = [md5EncryptedPassword uppercaseString];
+    NSString *params = [NSString stringWithFormat:@"preday=true&isCharge=0&username=%@&password=%@&Submit=Submit",userAccountID,md5EncryptedPassword];
     NSLog(@"%@",params);
-
+    NSURL *url = [NSURL URLWithString:@"http://whu-sa.whu.edu.cn/loginForPreday.jsp"];
+    NSMutableURLRequest * urlRequest = [NSMutableURLRequest requestWithURL:url];
     [urlRequest setHTTPMethod:@"POST"];
     [urlRequest setHTTPBody:[params dataUsingEncoding:NSISOLatin1StringEncoding]];
-
-    NSURLSessionDataTask * dataTask = [defaultSession dataTaskWithRequest:urlRequest completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
+    NSURLSessionDataTask * dataTask = [self.session dataTaskWithRequest:urlRequest completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
     {
         if(error == nil)
         {
             NSLog(@"Over");
-            NSString *completionString= [[NSString alloc]initWithData:data encoding:NSASCIIStringEncoding];
+            NSString *completionString= [[NSString alloc]initWithData:data encoding:[NSString GBKStringEncoding]];
             NSLog(@"%@",completionString);
-            //Ô¤¸¶°üÌìÓÃ»§×ÔÖ÷ÆôÍ£正常登录后的返回
-
+            if ([completionString rangeOfString:@"用户不存在"].location != NSNotFound)
+            {
+                NSLog(@"不是神码用户");
+                [delegate digitalChinaAccountManageResponse:SFDigitalChinaAccountResponseInvalidAccount error:nil];
+            }
+            else if ([completionString rangeOfString:@"用户名非法或密码不正确"].location != NSNotFound)
+            {
+                NSLog(@"用户名或密码错误");
+                [delegate digitalChinaAccountManageResponse:SFDigitalChinaAccountResponseWrongPassword error:nil];
+            }
+            else if ([completionString rangeOfString:@"预付包天用户自主启停"].location != NSNotFound)
+            {
+                NSLog(@"成功登录神码");
+                [delegate digitalChinaAccountManageResponse:SFDigitalChinaAccountResponseValidAccount error:nil];
+            }
+            else
+            {
+                NSLog(@"ERRor");
+            }
         }
     }];
     [dataTask resume];
 }
 
 
-- (void)changeAccountStatusTo:(SFDigitalChinaOperationWillBeDone)digitalChinaOperationWillBeDone
+- (void)changeAccountStatusTo:(NSInteger)isSuspend userAccountID:(NSString *)userAccountID delegate:(__weak id<SFDigitalChinaDelegate>)delegate
 {
-    NSInteger isSuspend = 0;
-    if (digitalChinaOperationWillBeDone == SFDigitalChinaResumeAccount)
-    {
-        isSuspend = 0;
-    }
-    else if (digitalChinaOperationWillBeDone == SFDigitalChinaSuspendAccount)
-    {
-        isSuspend = 1;
-    }
-//    else if (digitalChinaOperationWillBeDone == SFDigitalChinaCheckAccountAvailability)
-//    {
-//
-//    }
-    else
-    {
-        NSLog(@"String Error!");
-    }
+    isSuspend > 1 ?isSuspend = 1:isSuspend;
     NSURL *url = [NSURL URLWithString:@"http://whu-sa.whu.edu.cn/work_preday.jsp"];
-    NSURLSessionConfiguration *defaultConfigObject = [NSURLSessionConfiguration defaultSessionConfiguration];
-    NSURLSession *defaultSession = [NSURLSession sessionWithConfiguration: defaultConfigObject delegate: self delegateQueue: nil];
     NSMutableURLRequest * urlRequest = [NSMutableURLRequest requestWithURL:url];
-    NSString *params = [NSString stringWithFormat:@"table=101&userName=2012302630057&allowPreday=%ld&submit=submit",(long)isSuspend];
+    NSString *params = [NSString stringWithFormat:@"table=101&userName=%@&allowPreday=%ld&submit=submit",userAccountID,(long)isSuspend];
     NSData *data = [params dataUsingEncoding:NSUnicodeStringEncoding];
     [urlRequest setHTTPBody:data];
     [urlRequest setHTTPMethod:@"POST"];
     [urlRequest setHTTPBody:[params dataUsingEncoding:NSISOLatin1StringEncoding]];
-    [urlRequest setHTTPShouldHandleCookies:YES];
-    
-    NSURLSessionDataTask * dataTask = [defaultSession dataTaskWithRequest:urlRequest completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
+    NSURLSessionDataTask * dataTask = [self.session dataTaskWithRequest:urlRequest completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
     {
         if(error == nil)
         {
             NSLog(@"成功登陆");
-            NSString * completionString= [[NSString alloc]initWithData:data encoding:NSISOLatin1StringEncoding];
+            NSString * completionString= [[NSString alloc]initWithData:data encoding:[NSString GBKStringEncoding]];
             NSLog(@"completionString: %@",completionString);
-            if ([completionString rangeOfString:@"success"].location != NSNotFound)
+            if ([completionString rangeOfString:@"包天用户自主启停修改成功"].location != NSNotFound)
             {
                 NSLog(@"检测到成功信息");
-            }
-            else if ([completionString rangeOfString:@"error : Êý¾Ý¿â³ö´í£¡"].location != NSNotFound)
-            {
-                NSLog(@"不是神码用户");
+                switch (isSuspend)
+                {
+                    case 0:
+                        [delegate digitalChinaAccountManageResponse:SFDigitalChinaAccountResponseDidResume error:nil];
+                        break;
+                    case 1:
+                        [delegate digitalChinaAccountManageResponse:SFDigitalChinaAccountResponseDidSuspend error:nil];
+                        break;
+                    default:
+                        break;
+                }
             }
             else if ([completionString rangeOfString:@"error"].location != NSNotFound)
             {
-                NSLog(@"启停操作失败！");
+                NSLog(@"启停操作失败！(不算是网络错误)");
+                [delegate digitalChinaAccountManageResponse:SFDigitalChinaAccountResponseFailed error:nil];
             }
         }
         else
         {
+            [delegate digitalChinaAccountManageResponse:SFDigitalChinaAccountResponseFailed error:nil];
             NSLog(@"Error: %@", error);
         }
     }];
-    
+
     [dataTask resume];
 }
 
+#pragma mark Config Kits
 
-/**
- *  通过传入正则表达式解析内容
- *
- *  @param sourceString      待分析内容
- *  @param regularExpression 正则表达式
- *
- *  @return 返回找到的字符串（仅支持一个）
- */
-- (NSString *)analyseStringUsingRegularExpression:(NSString *)sourceString usingRegularExpression:(NSString *)regularExpression
+- (void)fetchParamWithCompletionHandler:(void (^)(void))completionHandler
 {
-    NSRegularExpression *reg = [NSRegularExpression regularExpressionWithPattern:regularExpression options:0 error:nil];
-    NSArray* match = [reg matchesInString:sourceString options:0 range:NSMakeRange(0, [sourceString length])];
-    NSString *resultString = [[NSString alloc]init];
-    if (match.count != 0)
+    NSURL *url = [NSURL URLWithString:@"http://whu-sa.whu.edu.cn/user_preday.jsp"];
+    NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:url];
+    [urlRequest setHTTPMethod:@"GET"];
+    NSURLSessionDataTask * dataTask = [self.session dataTaskWithRequest:urlRequest completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
     {
-        for (NSTextCheckingResult *matc in match)
+        if(error == nil)
         {
-            NSRange range = [matc range];
-            resultString = [sourceString substringWithRange:range];
+            NSString *contentString= [[NSString alloc]initWithData:data encoding:NSISOLatin1StringEncoding];
+            self.param = [contentString firstMatch:RX(@"(?<=<param name = \"param0\" value = \").*(?=\">)")];
+            completionHandler();
         }
-    }
-    return resultString;
+    }];
+    [dataTask resume];
 }
 
-- (NSString *)getMd5_32Bit_String:(NSString *)srcString{
+- (NSString *)getMd5_32Bit_String:(NSString *)srcString
+{
     const char *cStr = [srcString  UTF8String];
     unsigned char digest[CC_MD5_DIGEST_LENGTH];
     CC_MD5( cStr, strlen(cStr), digest );
@@ -177,5 +172,12 @@
     NSString *result = [[md5_32Bit_String substringToIndex:24] substringFromIndex:8];//即9～25位
     return result;
 }
+
+
+
+
+
+
+
 
 @end
