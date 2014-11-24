@@ -10,29 +10,29 @@
 	<string>Start&amp;StopSchoolNetworkAccount</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>07CD1430-A12C-4ADC-88F0-605B67D0C2D8</key>
+		<key>19A509BEAACEF938407E9DDC51DE8FE8A7D30D7A</key>
 		<string>https://github.com/s773364/Start-Stop-School-Network-Account.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>Start&amp;StopSchoolNetworkAccount.xcodeproj/project.xcworkspace</string>
+	<string>Start&amp;StopSchoolNetworkAccount.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>07CD1430-A12C-4ADC-88F0-605B67D0C2D8</key>
+		<key>19A509BEAACEF938407E9DDC51DE8FE8A7D30D7A</key>
 		<string>../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
 	<string>https://github.com/s773364/Start-Stop-School-Network-Account.git</string>
 	<key>IDESourceControlProjectVersion</key>
-	<integer>110</integer>
+	<integer>111</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>07CD1430-A12C-4ADC-88F0-605B67D0C2D8</string>
+	<string>19A509BEAACEF938407E9DDC51DE8FE8A7D30D7A</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>07CD1430-A12C-4ADC-88F0-605B67D0C2D8</string>
+			<string>19A509BEAACEF938407E9DDC51DE8FE8A7D30D7A</string>
 			<key>IDESourceControlWCCName</key>
 			<string>Start&amp;StopSchoolNetworkAccount</string>
 		</dict>
